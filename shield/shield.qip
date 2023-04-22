@@ -1,0 +1,3 @@
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "shield_rom.sv"]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "shield_palette.sv"]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "shield_example.sv"]
