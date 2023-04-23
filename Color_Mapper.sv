@@ -25,13 +25,14 @@ module color_mapper(
     
     parameter [31:0] Ball_Size = 4;
 
-    logic [9:0] base_x, base_y;
+    logic [9:0] base_x, base_y, background_x, background_y;
     logic [7:0] Rb[8];
     logic [7:0] Gb[8];
     logic [7:0] Bb[8];
     logic [7:0] Rt[8];
     logic [7:0] Gt[8];
     logic [7:0] Bt[8];
+    logic [7:0] Rba, Gba, Bba; // background R G B
     logic [7:0] redout, greenout, blueout;
     logic [9:0] BallX[tank_num][ARRAY_SIZE], BallY[tank_num][ARRAY_SIZE];
     logic ball_on[tank_num][ARRAY_SIZE];
@@ -75,12 +76,17 @@ module color_mapper(
     turret5_example turret5(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[5]), .green(Gt[5]), .blue(Bt[5]));
     turret6_example turret6(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[6]), .green(Gt[6]), .blue(Bt[6]));
     turret7_example turret7(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[7]), .green(Gt[7]), .blue(Bt[7]));
+    bricks_example bricks(.DrawX(background_x), .DrawY(background_y), .vga_clk(CLK), 
+    .blank(1'b1), .red(Rba), .green(Gba), .blue(Bba));
     // ram needed here (OCM) : needs import dual ports out for software 
     // then every time we get Draw X and Draw Y we check corresponding bytes to get pixel information.
     always_comb
     begin
         base_x = 0;
         base_y = 0;
+        // because 32x32 is the smallest unit of the background brick
+        background_x = (DrawX & (img_width - 1)) * 20; // mod 32
+        background_y = (DrawY & (img_height - 1)) * 15; // mod 32
         ball_ind = tank_num * ARRAY_SIZE;
         if (blank) begin
             // @todo :  check VRAM if draw text, then  we draw text instead of tanks and background
@@ -100,9 +106,9 @@ module color_mapper(
                         blueout = Bb[base1_direction];
                     end
                     else begin
-                        redout = 8'he9;
-                        greenout = 8'hd8;
-                        blueout = 8'he4;
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
                     end
             end
             // tank2 second priority
@@ -122,9 +128,9 @@ module color_mapper(
                         blueout = Bb[base2_direction];
                     end
                     else begin
-                        redout = 8'he9;
-                        greenout = 8'hd8;
-                        blueout = 8'he4;
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
                     end
             end 
             else begin
@@ -155,9 +161,9 @@ module color_mapper(
                     blueout = 8'h00;
                 end 
                 else begin
-                    redout = 8'he9;
-                    greenout = 8'hd8;
-                    blueout = 8'he4;
+                    redout = Rba;
+                    greenout = Gba;
+                    blueout = Bba;
                 end
             end
         end
