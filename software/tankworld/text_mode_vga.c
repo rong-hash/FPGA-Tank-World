@@ -13,6 +13,7 @@
 #include <string.h>
 #include <alt_types.h>
 #include "text_mode_vga.h"
+#include "game.h"
 
 void textVGAColorClr()
 {
@@ -74,20 +75,23 @@ void mem_test() {
 	}
 }
 
+/**
+ * @brief Initialize the VGA controller, clear the screen, and configure the palette
+ * 
+ */
+void text_VGA_init(void) {
+	textVGAColorClr();
+	//initialize palette
+	for (int i = 0; i < 16; i++)
+		setColorPalette (i, colors[i].red, colors[i].green, colors[i].blue);
+}
+
 void textVGAColorScreenSaver()
 {
 	//This is the function you call for your week 2 demo
 	char color_string[80];
     int fg, bg, x, y;
-	textVGAColorClr();
-	usleep(100000);
-	mem_test();
-	usleep(100000);
-	//initialize palette
-	for (int i = 0; i < 16; i++)
-	{
-		setColorPalette (i, colors[i].red, colors[i].green, colors[i].blue);
-	}
+    text_VGA_init();
 	while (1)
 	{
 		fg = rand() % 16;

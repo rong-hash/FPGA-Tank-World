@@ -141,6 +141,91 @@ We use SCC to slow down the slock:
 * Whenever there is an event, variable will inherit preivous value.
 
 * When SCC reaches the first cycle, we now trigger the event effect.
+---
+## Software-Hardware Communication registers (SCR)
+
+SCRs are defined both in software and in hardware. Techniquely all registers must be in hardware.
+
+The reason SCR is special is that software uses this as a way to communicate with hardware.
+
+---
+
+### SCR implementation in hardware (READ)
+
+The goal is to handle Read / Write request through AVALON interface.
+
+```sv
+always_ff @(posedge CLK ) begin
+	if(AVL_WRITE && AVL_ADDR[11]) begin
+		if(AVL_ADDR <= `PALETTE_END)
+			palette[AVL_ADDR[2:0]] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `CTRL_REG_END)
+			control_reg <= AVL_WRITEDATA;
+		// ... more registers 
+	end 
+	// write in next slide
+end
+```
+
+---
+
+### SCR implementation in hardware (WRITE)
+
+```sv
+	always_ff @(posedge CLK ) begin
+		if(AVL_WRITE && AVL_ADDR[11]) begin
+		// previous slide
+		end else if(AVL_READ && AVL_ADDR[11]) begin
+			if(AVL_ADDR <= `PALETTE_END)
+				RD_DATA2 <= palette[AVL_ADDR[2:0]];
+			else if(AVL_ADDR <= `CTRL_REG_END)
+				RD_DATA2 <= control_reg;
+		// more registers to write
+		end
+	end
+```
+
+---
+### SCR implementation in hardware (Notes on style)
+
+* Use `define` instead of magic number. @czrgg
+* Handle both R & W although one of which operation might not be used.
+
+---
+
+### SCR implementation in software
+
+```c
+struct TEXT_VGA_STRUCT {
+	alt_u8 VRAM [ROWS*COLUMNS*2]; // video ram, used to store the text mode VGA data
+	alt_u32 padding0 [848]; // first 2048 (4B)
+	alt_u32 PALETTE [8]; // VGA palette, can support 16 colors
+	alt_u32 CTRL;  // tank control register
+	alt_u32 game_attr; // game attribute register (start | map_num | maximum health) 
+	alt_u32 coin_attr[3]; // coin attribute register : (gold, silver, bronze) 
+	alt_u32 health[2]; // health register
+	alt_u32 score[2]; // score register
+	alt_u32 init_pos[2]; // initial  position register
+	// wall_x and wall_y format : (present_bit | position_x (10 bits) | position_y (10 bits)) 
+	// other bits are reserved
+	alt_u32 wall_pos[16]; // wall position register
+	// ------- below are hardware registers(reigsters' value given by hardware), do not modify -------
+	alt_u32 bullet_num[2]; // bullet number register (number of bullets left)
+	alt_u32 tank_pos[2]; // tank position register
+
+	alt_u32 padding1 [2009]; // second 2048 (4B)
+};
+```
+
+
+---
+### SCR implementation in software (comments)
+
+Refer to hardware `define` to find corresponding addresses.
+
+Once this structure changes, we MUST make corresponding changes in hardware.
+
+This makes it important to first settle the data structure.
 
 ---
 
@@ -174,5 +259,5 @@ for(idx[i] = 0; idx[i] < ARRAY_SIZE; idx[i]++) // if not a hole, and it exists, 
 		// initialize bullet & alive_cnt: code in previous section
 	end
 ```
-
 ---
+

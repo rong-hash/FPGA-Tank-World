@@ -185,6 +185,22 @@
          type = "String";
       }
    }
+   element lab7soc
+   {
+      datum _originalDeviceFamily
+      {
+         value = "MAX 10";
+         type = "String";
+      }
+   }
+   element lab7soc
+   {
+      datum _originalDeviceFamily
+      {
+         value = "MAX 10";
+         type = "String";
+      }
+   }
    element led
    {
       datum _sortIndex

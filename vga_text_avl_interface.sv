@@ -22,9 +22,23 @@ BKG_R/G/B = Background color, flipped with foreground when IVn bit is set
 FGD_R/G/B = Foreground color, flipped with background when Inv bit is set
 
 ************************************************************************/
-`define NUM_REGS 601 //80*30 characters / 4 characters per register
-`define CTRL_REG 600 //index of control register
-`define NUM_PALETTE 8
+`define NUM_REGS 						601 //80*30 characters / 4 characters per register
+`define CTRL_REG 						600 //index of control register
+`define NUM_PALETTE 					8
+`define PALETTE_END  					2055
+`define CTRL_REG_END 					2056
+`define GAME_ATTR_REG_END 				2057
+`define COIN_ATTR_REG_END 				2060
+`define HEALTH_ATTR_REG_END				2062
+`define SCORE_ATTR_REG_END 				2064
+`define INIT_POS_REG_END 				2066
+`define WALL_POS_REG_END 				2082
+`define BULLET_NUM_REG_END 				2084
+`define TANK_POS_REG_END 				2086
+
+`define COIN_NUM 						3
+`define TANK_NUM 						2
+`define WALL_NUM 					    16
 
 module vga_text_avl_interface (
 	// Avalon Clock Input, note this clock is also used for VGA, so this must be 50Mhz
@@ -63,11 +77,23 @@ logic [10:0] index;
 logic [15:0] char;
 logic [31:0] TEMP_WRITEDATA;
 logic [31:0] char_data;
-logic [31:0] control_reg;
 logic [31:0] palette[`NUM_PALETTE];
 logic [9:0] tank1_x, tank1_y, tank2_x, tank2_y;
 logic [2:0] base1_direction, base2_direction, turret1_direction, turret2_direction;
 logic [31:0] bullet_array[2][8];
+
+
+logic [31:0] control_reg;
+logic [31:0] game_attr_reg;
+logic [31:0] coin_attr_reg[`COIN_NUM];
+logic [31:0] health_attr_reg[`TANK_NUM];
+logic [31:0] score_attr_reg[`TANK_NUM];
+logic [31:0] init_pos_reg[`TANK_NUM];
+logic [31:0] wall_pos_reg[`WALL_NUM];
+logic [31:0] bullet_num_reg[`TANK_NUM];
+logic [31:0] tank_pos_reg[`TANK_NUM];
+
+
 
 // logic fire[2];
 logic [7:0]  hole_ind[2];
@@ -88,21 +114,72 @@ ram my_vram(.address_a(AVL_ADDR[10:0]), .address_b(index), .byteena_a(AVL_BYTE_E
 
 
 // write into control register
-always_ff @(posedge CLK)  
-begin
-	if (AVL_CS & AVL_WRITE && (AVL_ADDR == 10'b1001011000))
-		control_reg <= AVL_WRITEDATA;
-end
+// always_ff @(posedge CLK)  
+// begin
+// 	if (AVL_CS & AVL_WRITE && (AVL_ADDR == CTRL_REG_ADDR))
+// 		control_reg <= AVL_WRITEDATA;
+// end
 
-// palette 
+// palette : before control register and after vram
+// RD_DATA2 stores the data after VRAM (with word address >= 2048)
+// VRAM starts with a palette, following a series of attribute registers
+// RD_DATA2 is to avoid multi-driver, so AVL_WRITE data doesn't have this problem
+// see a series of defines to see the address range of each register
 always_ff @(posedge CLK ) begin
-	if(AVL_WRITE && AVL_ADDR[11]) palette[AVL_ADDR[2:0]] <= AVL_WRITEDATA;
-	else if(AVL_READ && AVL_ADDR[11]) RD_DATA2 <= palette[AVL_ADDR[2:0]];
+	if(AVL_WRITE && AVL_ADDR[11]) begin
+		if(AVL_ADDR <= `PALETTE_END)
+			palette[AVL_ADDR[2:0]] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `CTRL_REG_END)
+			control_reg <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `GAME_ATTR_REG_END)
+			game_attr_reg[AVL_ADDR - `CTRL_REG_END - 1] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `COIN_ATTR_REG_END)
+			coin_attr_reg[AVL_ADDR - `GAME_ATTR_REG_END - 1] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `HEALTH_ATTR_REG_END)
+			health_attr_reg[AVL_ADDR - `COIN_ATTR_REG_END - 1] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `SCORE_ATTR_REG_END)
+			score_attr_reg[AVL_ADDR - `HEALTH_ATTR_REG_END - 1] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `INIT_POS_REG_END)
+			init_pos_reg[AVL_ADDR - `SCORE_ATTR_REG_END - 1] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `WALL_POS_REG_END)
+			wall_pos_reg[AVL_ADDR - `INIT_POS_REG_END - 1] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `BULLET_NUM_REG_END)
+			bullet_num_reg[AVL_ADDR - `WALL_POS_REG_END - 1] <= AVL_WRITEDATA;
+		else if(AVL_ADDR <= `TANK_POS_REG_END)
+			tank_pos_reg[AVL_ADDR - `BULLET_NUM_REG_END - 1] <= AVL_WRITEDATA;
+	end else if(AVL_READ && AVL_ADDR[11]) begin
+		if(AVL_ADDR <= `PALETTE_END)
+			RD_DATA2 <= palette[AVL_ADDR[2:0]];
+		else if(AVL_ADDR <= `CTRL_REG_END)
+			RD_DATA2 <= control_reg;
+		else if(AVL_ADDR <= `GAME_ATTR_REG_END)
+			RD_DATA2 <= game_attr_reg[AVL_ADDR - `CTRL_REG_END - 1];
+		else if(AVL_ADDR <= `COIN_ATTR_REG_END)
+			RD_DATA2 <= coin_attr_reg[AVL_ADDR - `GAME_ATTR_REG_END - 1];
+		else if(AVL_ADDR <= `HEALTH_ATTR_REG_END)
+			RD_DATA2 <= health_attr_reg[AVL_ADDR - `COIN_ATTR_REG_END - 1];
+		else if(AVL_ADDR <= `SCORE_ATTR_REG_END)
+			RD_DATA2 <= score_attr_reg[AVL_ADDR - `HEALTH_ATTR_REG_END - 1];
+		else if(AVL_ADDR <= `INIT_POS_REG_END)
+			RD_DATA2 <= init_pos_reg[AVL_ADDR - `SCORE_ATTR_REG_END - 1];
+		else if(AVL_ADDR <= `WALL_POS_REG_END)
+			RD_DATA2 <= wall_pos_reg[AVL_ADDR - `INIT_POS_REG_END - 1];
+		else if(AVL_ADDR <= `BULLET_NUM_REG_END)
+			RD_DATA2 <= bullet_num_reg[AVL_ADDR - `WALL_POS_REG_END - 1];
+		else if(AVL_ADDR <= `TANK_POS_REG_END)
+			RD_DATA2 <= tank_pos_reg[AVL_ADDR - `BULLET_NUM_REG_END - 1];
+	end
+end
+// This is address splitter splitter VRAM (OCM) and other registers (not necessarily OCM)
+always_comb begin
+	unique case (AVL_ADDR[11]) 
+		1'b0: AVL_READDATA = RD_DATA1;
+		1'b1: AVL_READDATA = RD_DATA2;
+	endcase
 end
 
-
-my_text my_text(.DrawX(DrawX), .DrawY(DrawY), .AVL_ADDR(AVL_ADDR),  .char_data(char_data), .RD_DATA1(RD_DATA1), .RD_DATA2(RD_DATA2), 
-	 			.index(index), .char(char), .AVL_READDATA(AVL_READDATA), .location(location));
+// This will calculate the address of the font related information
+my_text my_text(.DrawX(DrawX), .DrawY(DrawY),  .char_data(char_data), .index(index), .char(char), .location(location));
 
 // char is on upper bit right now, so bit[15] has inv information, while bit[14:8] is original(lab71) bit[6:0]
 assign font_addr = {char[14:8], DrawY[3:0]};
@@ -119,6 +196,7 @@ color_mapper mapper(.CLK(CLK), .pixel_clk(pixel_clk), .DrawX(DrawX), .DrawY(Draw
 					.base1_direction(base1_direction), .turret1_direction(turret1_direction), 
 					.base2_direction(base2_direction), .turret2_direction(turret2_direction),
 					.bullet_array(bullet_array),
+					.char(char), .font_data(font_data), .palette(palette),
 					.blank(blank), .Red(red), .Green(green), .Blue(blue));
 
 // assign debug1 = {bullet_array[0][0][0], bullet_array[0][1][0], bullet_array[0][2][0], bullet_array[0][3][0], bullet_array[0][4][0], bullet_array[0][5][0], bullet_array[0][6][0], bullet_array[0][7][0]};
@@ -131,11 +209,9 @@ endmodule
 
 module my_text (
 	input logic [9:0] DrawX, DrawY,
-	input logic [11:0] AVL_ADDR,
-	input logic [31:0] char_data, RD_DATA1, RD_DATA2,
+	input logic [31:0] char_data,
 	output logic [10:0] index,
 	output logic [15:0] char,
-	output logic [31:0] AVL_READDATA,
 	output logic [11:0] location
 
 );
@@ -151,9 +227,6 @@ module my_text (
 			1'b0: char = char_data[15:0];
 			1'b1: char = char_data[31:16];
 		endcase
-		unique case (AVL_ADDR[11]) 
-			1'b0: AVL_READDATA = RD_DATA1;
-			1'b1: AVL_READDATA = RD_DATA2;
-		endcase
+		
 	end
 endmodule

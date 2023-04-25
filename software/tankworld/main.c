@@ -143,6 +143,7 @@ void setKeycode(WORD keycode)
 
 
 long transfer_code(char* keycode){
+	// test text showing
 	long final_code;
 	long tank1_code, tank2_code;
 	long tank1_dir = 0;
@@ -238,6 +239,9 @@ int main() {
 	printf("initializing USB...\n");
 	USB_init();
 
+	text_VGA_init();
+	game_init();
+	show_menu();
 
 
 	while (1) {
@@ -269,8 +273,13 @@ int main() {
 				}
 				// setKeycode(kbdbuf.keycode[0]);
 				// write the key code to the ram
-				code = transfer_code((char*)kbdbuf.keycode);
-				ramsetctl(code);
+				if((vga_ctrl->game_attr & 1)) {
+					code = transfer_code((char*)kbdbuf.keycode);
+					ramsetctl(code);
+				} else {
+					menu_control((char*)kbdbuf.keycode);
+				}
+
 				printSignedHex0(kbdbuf.keycode[0]);
 				printSignedHex1(kbdbuf.keycode[1]);
 				printf("\n");

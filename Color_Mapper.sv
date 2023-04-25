@@ -9,12 +9,17 @@
 * Layer 2 : Text-granular sprites
 */
 
+`define NUM_PALETTE 8
+
 module color_mapper(
     input logic CLK, pixel_clk,
     input logic [9:0] tank1_x, tank1_y, tank2_x, tank2_y, DrawX, DrawY,
     input logic [2:0] base1_direction, turret1_direction, base2_direction, turret2_direction,
     input logic blank,
     input logic [31:0] bullet_array[2][8], 
+    input logic [15:0] char,
+    input logic [7:0] font_data,
+    input logic [31:0] palette[`NUM_PALETTE],
     output logic [7:0] Red, Green, Blue
 );
 
@@ -59,7 +64,8 @@ module color_mapper(
         end
     end
 
-    
+
+    // tank's base rom
     base0_example base0(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rb[0]), .green(Gb[0]), .blue(Bb[0]));
     base1_example base1(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rb[1]), .green(Gb[1]), .blue(Bb[1]));
     base2_example base2(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rb[2]), .green(Gb[2]), .blue(Bb[2]));
@@ -68,6 +74,7 @@ module color_mapper(
     base5_example base5(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rb[5]), .green(Gb[5]), .blue(Bb[5]));
     base6_example base6(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rb[6]), .green(Gb[6]), .blue(Bb[6]));
     base7_example base7(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rb[7]), .green(Gb[7]), .blue(Bb[7]));
+    // tank's turrent rom
     turret0_example turret0(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[0]), .green(Gt[0]), .blue(Bt[0]));
     turret1_example turret1(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[1]), .green(Gt[1]), .blue(Bt[1]));
     turret2_example turret2(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[2]), .green(Gt[2]), .blue(Bt[2]));
@@ -76,8 +83,10 @@ module color_mapper(
     turret5_example turret5(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[5]), .green(Gt[5]), .blue(Bt[5]));
     turret6_example turret6(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[6]), .green(Gt[6]), .blue(Bt[6]));
     turret7_example turret7(.DrawX(base_x), .DrawY(base_y), .vga_clk(CLK), .blank(1'b1), .red(Rt[7]), .green(Gt[7]), .blue(Bt[7]));
+    // background (bricks) rom
     bricks_example bricks(.DrawX(background_x), .DrawY(background_y), .vga_clk(CLK), 
     .blank(1'b1), .red(Rba), .green(Gba), .blue(Bba));
+
     // ram needed here (OCM) : needs import dual ports out for software 
     // then every time we get Draw X and Draw Y we check corresponding bytes to get pixel information.
     always_comb
@@ -91,7 +100,40 @@ module color_mapper(
         if (blank) begin
             // @todo :  check VRAM if draw text, then  we draw text instead of tanks and background
             // tank1 highest priority
-            if (DrawX >= tank1_x && DrawX < tank1_x + img_width &&
+            if(char) begin // if software decide to occupy current position as a port of text
+
+                if (font_data[7 - DrawX[2:0]] ^ char[15]) begin // if, after exerting inverse logic, it's foreground.
+                    case (char[4])
+                        0 : begin  
+                            redout <= palette[char[7:5]][11:8];
+                            greenout <= palette[char[7:5]][7:4];
+                            blueout <= palette[char[7:5]][3:0];
+                        end 
+                        1 : begin 
+                            redout <= palette[char[7:5]][27:24];
+                            greenout <= palette[char[7:5]][23:20];
+                            blueout <= palette[char[7:5]][19:16];
+                        end
+                        default : ;
+                    endcase
+                end
+                else begin // if, after exerting inverse logic, it's background
+                    case (char[0])
+                        0 : begin  
+                            redout <= palette[char[3:1]][11:8];
+                            greenout <= palette[char[3:1]][7:4];
+                            blueout <= palette[char[3:1]][3:0];
+                        end 
+                        1 : begin 
+                            redout <= palette[char[3:1]][27:24];
+                            greenout <= palette[char[3:1]][23:20];
+                            blueout <= palette[char[3:1]][19:16];
+                        end
+                        default : ;
+                    endcase
+                end
+
+            end else if (DrawX >= tank1_x && DrawX < tank1_x + img_width &&
                 DrawY >= tank1_y && DrawY < tank1_y + img_height) begin
                     base_x = (DrawX - tank1_x) * 20;
                     base_y = (DrawY - tank1_y) * 15;
