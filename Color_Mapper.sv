@@ -28,8 +28,6 @@ module color_mapper(
 
     parameter [5:0] img_width = 32;
     parameter [5:0] img_height = 32;
-    parameter [15:0] coin_width = 16;
-    parameter [15:0] coin_height = 16;
     parameter [1:0] tank_num = 2;
     parameter [7:0] ARRAY_SIZE = 8;
     
@@ -232,38 +230,57 @@ module color_mapper(
                 end 
                 else if( (coin_attr_reg[0] & 1) // if gold coin exist
                     // and within drawing point is inside the coin (centered at (x,y))
-                    && DrawX >= ((coin_attr_reg[0] >> 1) & `POS_MASK) - (coin_width >> 1) 
-                    && DrawX < ((coin_attr_reg[0] >> 1) & `POS_MASK) + (coin_width >> 1)
-                    && DrawY >= ((coin_attr_reg[0] >> 11) & `POS_MASK) - (coin_height >> 1)
-                    && DrawY < ((coin_attr_reg[0] >> 11) & `POS_MASK) + (coin_height >> 1)
+                    && DrawX >= coin_attr_reg[0][10:1] - 8
+                    && DrawX < coin_attr_reg[0][10:1] + 8
+                    && DrawY >= coin_attr_reg[0][20:11]  - 8
+                    && DrawY < coin_attr_reg[0][20:11] + 8
                  ) begin // gold coin
-                    coin_x[0] = (DrawX - (((coin_attr_reg[0] >> 1) & `POS_MASK) - (coin_width >> 1)) + coin_width * ((coin_attr_reg[0] >> 21) & 7) ) * 5;
-                    coin_y[0] = (DrawY - ((coin_attr_reg[0] >> 11) & `POS_MASK) - (coin_height >> 1)) * 30;
-                    redout = Rcg;
-                    greenout = Gcg;
-                    blueout = Bcg;
-                 end else if( (coin_attr_reg[1] & 1) // if silver coin exist
-                    && DrawX >= ((coin_attr_reg[1] >> 1) & `POS_MASK) - (coin_width >> 1) 
-                    && DrawX < ((coin_attr_reg[1] >> 1) & `POS_MASK) + (coin_width >> 1)
-                    && DrawY >= ((coin_attr_reg[1] >> 11) & `POS_MASK) - (coin_height >> 1)
-                    && DrawY < ((coin_attr_reg[1] >> 11) & `POS_MASK) + (coin_height >> 1)
-                 ) begin // silver coin
-                    coin_x[1] = (DrawX - (((coin_attr_reg[1] >> 1) & `POS_MASK) - (coin_width >> 1)) + coin_width * ((coin_attr_reg[1] >> 21) & 7) ) * 5;
-                    coin_y[1] = (DrawY - ((coin_attr_reg[1] >> 11) & `POS_MASK) - (coin_height >> 1)) * 30;
-                    redout = Rcs;
-                    greenout = Gcs;
-                    blueout = Bcs;
-                 end else if( (coin_attr_reg[2] & 1) // if copper coin exist
-                    && DrawX >= ((coin_attr_reg[2] >> 1) & `POS_MASK) - (coin_width >> 1) 
-                    && DrawX < ((coin_attr_reg[2] >> 1) & `POS_MASK) + (coin_width >> 1)
-                    && DrawY >= ((coin_attr_reg[2] >> 11) & `POS_MASK) - (coin_height >> 1)
-                    && DrawY < ((coin_attr_reg[2] >> 11) & `POS_MASK) + (coin_height >> 1)
-                 ) begin // copper coin
-                    coin_x[2] = (DrawX - (((coin_attr_reg[2] >> 1) & `POS_MASK) - (coin_width >> 1)) + coin_width * ((coin_attr_reg[2] >> 21) & 7) ) * 5;
-                    coin_y[2] = (DrawY - ((coin_attr_reg[2] >> 11) & `POS_MASK) - (coin_height >> 1)) * 30;
-                    redout = Rcc;
-                    greenout = Gcc;
-                    blueout = Bcc;
+                    coin_x[0] = (DrawX - (coin_attr_reg[0][10:1] - 8)) * 5;
+                    coin_y[0] = (DrawY - (coin_attr_reg[0][20:11]  - 8)) * 30;
+                    if((Rcg | Gcg | Bcg) != 8'h0) begin
+                        redout = Rcg;
+                        greenout = Gcg;
+                        blueout = Bcg;
+                    end
+                    else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                 end else if( (coin_attr_reg[1] & 1)
+                 && DrawX >= coin_attr_reg[1][10:1] - 8
+                && DrawX < coin_attr_reg[1][10:1] + 8
+                && DrawY >= coin_attr_reg[1][20:11]  - 8
+                && DrawY < coin_attr_reg[1][20:11] + 8
+                ) begin // silver coin
+                    coin_x[1] = (DrawX - (coin_attr_reg[1][10:1] - 8) + coin_attr_reg[1][23:21]* 16)  * 5;
+                    coin_y[1] = (DrawY - (coin_attr_reg[1][20:11]  - 8)) * 30;
+                    if((Rcs | Gcs | Bcs) != 8'h0) begin
+                        redout = Rcs;
+                        greenout = Gcs;
+                        blueout = Bcs;
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if( (coin_attr_reg[2] & 1) 
+                && DrawX >= coin_attr_reg[2][10:1] - 8
+                && DrawX < coin_attr_reg[2][10:1] + 8
+                && DrawY >= coin_attr_reg[2][20:11]  - 8
+                && DrawY < coin_attr_reg[2][20:11] + 8
+                ) begin // copper coin
+                    coin_x[2] = (DrawX - (coin_attr_reg[2][10:1] - 8) + coin_attr_reg[2][23:21]* 16) * 5;
+                    coin_y[2] = (DrawY - (coin_attr_reg[2][20:11]  - 8)) * 30;
+                    if((Rcc | Gcc | Bcc) != 8'h0) begin
+                        redout = Rcc;
+                        greenout = Gcc;
+                        blueout = Bcc;
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
                 end else begin // background : the last layer
                     redout = Rba;
                     greenout = Gba;

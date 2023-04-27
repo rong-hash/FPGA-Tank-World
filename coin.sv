@@ -39,6 +39,7 @@ module coins(
     logic [9:0] coin_x[`COIN_NUM], coin_y[`COIN_NUM];
     logic [31:0] coin_attr_reg[`COIN_NUM]; // 0 is gold, 1 is silver, 2 is copper : (valid bit, x, y) from LSB to MSB, other bits are reserved
     logic [3:0] i, j, k, p;
+    logic [253:0] coin_cnt; // 50MHz clock counter for coin make frame advance every second
 
     parameter [9:0] tank_width = 32;
 	parameter [9:0] tank_height = 32;
@@ -50,6 +51,7 @@ module coins(
             for(k = 0; k < `COIN_NUM; k = k + 1) begin
                 coin_attr_reg[k] <= 0;
             end
+            coin_cnt <= 0;
         end else if(AVL_WRITE && AVL_ADDR[11] && AVL_ADDR <=`COIN_ATTR_REG_END && AVL_ADDR > `GAME_ATTR_REG_END)  // avoid multi-driver by putting AVALON write and hardware write together
             coin_attr_reg[AVL_ADDR - `GAME_ATTR_REG_END - 1] <= AVL_WRITEDATA;
         else if (AVL_WRITE && AVL_ADDR[11] && AVL_ADDR <= `SCORE_ATTR_REG_END && AVL_ADDR > `HEALTH_ATTR_REG_END) // avoid multi-driver by putting AVALON write and hardware write together
@@ -102,9 +104,12 @@ module coins(
             end 
             // no tank hits any coins, so update the coin's frame number
             else begin 
-                for(j = 0; j < `COIN_NUM; j = j + 1) begin
-                    if((coin_attr_reg[j] >> 21) >= 7) coin_attr_reg[j] <= coin_attr_reg[j] & `COUNTER_MASK; // clear the counter 
-                    else coin_attr_reg[j] <= coin_attr_reg[j] + `COUNTER_INC; // update coin's frame number
+                coin_cnt <= coin_cnt + 1;
+                if(coin_cnt == 0) begin
+                    for(j = 0; j < `COIN_NUM; j = j + 1) begin
+                        if((coin_attr_reg[j] >> 21) >= 7) coin_attr_reg[j] <= coin_attr_reg[j] & `COUNTER_MASK; // clear the counter 
+                        else coin_attr_reg[j] <= coin_attr_reg[j] + `COUNTER_INC; // update coin's frame number
+                    end
                 end
             end
         end

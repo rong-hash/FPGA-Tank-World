@@ -149,7 +149,7 @@ void draw_status_bars(void) {
     y = TANK_2_STATUS_BAR_Y;
     sprintf(color_string, "HEALTH:  %01lu", vga_ctrl->health[1]);
     textVGADrawColorText(color_string, TANK_2_STATUS_BAR_X, y++, PADDING_COLOR, FONT_COLOR);
-    sprintf(color_string, "SCORE: %03lu", vga_ctrl->score[1]); // debugging purpose
+    sprintf(color_string, "SCORE: %03lu", vga_ctrl->score[1]); 
     textVGADrawColorText(color_string, TANK_2_STATUS_BAR_X, y++, PADDING_COLOR, FONT_COLOR);
     sprintf(color_string, "BULLETS: %01lu", vga_ctrl->bullet_num[1]);
     textVGADrawColorText(color_string, TANK_2_STATUS_BAR_X, y++, PADDING_COLOR, FONT_COLOR);
