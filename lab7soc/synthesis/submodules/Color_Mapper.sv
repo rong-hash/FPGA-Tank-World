@@ -119,8 +119,8 @@ module color_mapper(
         background_y = (DrawY & (img_height - 1)) * 15; // mod 32
         // coin_x, coin_y also incorporate the frame number (coin_attr_reg >> 21) which should be within [0, 7]
         for(j = 0; j < `COIN_NUM; j++) begin
-            coin_x[j] = ((DrawX & (coin_width - 1)) + coin_width * (coin_attr_reg[j] >> 21) ) * 5; // mod 16
-            coin_y[j] = (DrawY & (coin_height - 1)) * 30; // mod 16
+            coin_x[j] = 0; 
+            coin_y[j] = 0; 
         end
 
         ball_ind = tank_num * ARRAY_SIZE;
@@ -237,6 +237,8 @@ module color_mapper(
                     && DrawY >= ((coin_attr_reg[0] >> 11) & `POS_MASK) - (coin_height >> 1)
                     && DrawY < ((coin_attr_reg[0] >> 11) & `POS_MASK) + (coin_height >> 1)
                  ) begin // gold coin
+                    coin_x[0] = (DrawX - (((coin_attr_reg[0] >> 1) & `POS_MASK) - (coin_width >> 1)) + coin_width * ((coin_attr_reg[0] >> 21) & 7) ) * 5;
+                    coin_y[0] = (DrawY - ((coin_attr_reg[0] >> 11) & `POS_MASK) - (coin_height >> 1)) * 30;
                     redout = Rcg;
                     greenout = Gcg;
                     blueout = Bcg;
@@ -246,6 +248,8 @@ module color_mapper(
                     && DrawY >= ((coin_attr_reg[1] >> 11) & `POS_MASK) - (coin_height >> 1)
                     && DrawY < ((coin_attr_reg[1] >> 11) & `POS_MASK) + (coin_height >> 1)
                  ) begin // silver coin
+                    coin_x[1] = (DrawX - (((coin_attr_reg[1] >> 1) & `POS_MASK) - (coin_width >> 1)) + coin_width * ((coin_attr_reg[1] >> 21) & 7) ) * 5;
+                    coin_y[1] = (DrawY - ((coin_attr_reg[1] >> 11) & `POS_MASK) - (coin_height >> 1)) * 30;
                     redout = Rcs;
                     greenout = Gcs;
                     blueout = Bcs;
@@ -255,6 +259,8 @@ module color_mapper(
                     && DrawY >= ((coin_attr_reg[2] >> 11) & `POS_MASK) - (coin_height >> 1)
                     && DrawY < ((coin_attr_reg[2] >> 11) & `POS_MASK) + (coin_height >> 1)
                  ) begin // copper coin
+                    coin_x[2] = (DrawX - (((coin_attr_reg[2] >> 1) & `POS_MASK) - (coin_width >> 1)) + coin_width * ((coin_attr_reg[2] >> 21) & 7) ) * 5;
+                    coin_y[2] = (DrawY - ((coin_attr_reg[2] >> 11) & `POS_MASK) - (coin_height >> 1)) * 30;
                     redout = Rcc;
                     greenout = Gcc;
                     blueout = Bcc;

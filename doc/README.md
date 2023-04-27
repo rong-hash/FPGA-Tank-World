@@ -261,3 +261,67 @@ for(idx[i] = 0; idx[i] < ARRAY_SIZE; idx[i]++) // if not a hole, and it exists, 
 ```
 ---
 
+### Feedback and Coin
+
+Feed back reisters are **read only** registers.
+
+Read-only is trivially a drawback.
+
+But why?
+
+Trade-off : design complexity caused by difference of frame clock(vs) and system clock(50 MHZ) and functionality.
+
+Since write functionality can be deprecated by moving all software related portion to hardware, I decide to just use read only.
+
+---
+### Read only feed back registers
+
+* health
+
+* bullet number
+
+* tank positions
+
+Health is now initialized in hardware upon reset.
+
+---
+
+### Coin registers
+
+It's important to keep one register in one module.
+
+It's impossible and not logical to set a register as output in two modules. 
+
+Convention : 
+
+Define register in a module, and use wire to export that.
+
+This seems trivial but takes me a lot of time to debug.
+
+---
+
+### Coin example : sample implementation
+
+Module interface
+
+```sv
+module coins(
+    input logic Reset, CLK,
+    input  logic AVL_WRITE,					// Avalon-MM Write
+    input  logic [11:0] AVL_ADDR,			// Avalon-MM Address
+	input  logic [31:0] AVL_WRITEDATA,		// Avalon-MM Write Data
+    input logic [9:0] tank_x[`TANK_NUM], tank_y[`TANK_NUM],
+    output logic [31:0] score_attr_reg[`TANK_NUM],
+    output logic [31:0] coin_attr_reg_out[`COIN_NUM]
+);
+```
+---
+### Coin example : sample implementation
+
+Internal registers
+```sv
+logic [9:0] coin_x[`COIN_NUM], coin_y[`COIN_NUM];
+logic [31:0] coin_attr_reg[`COIN_NUM]; // 0 is gold, 1 is silver, 2 is copper : (valid bit, x, y) from LSB to MSB, other bits are reserved
+logic [3:0] i, j, k, p;
+```
+

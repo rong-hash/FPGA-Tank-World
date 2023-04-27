@@ -38,7 +38,7 @@ module coins(
 );
     logic [9:0] coin_x[`COIN_NUM], coin_y[`COIN_NUM];
     logic [31:0] coin_attr_reg[`COIN_NUM]; // 0 is gold, 1 is silver, 2 is copper : (valid bit, x, y) from LSB to MSB, other bits are reserved
-    logic [3:0] i, j, k;
+    logic [3:0] i, j, k, p;
 
     parameter [9:0] tank_width = 32;
 	parameter [9:0] tank_height = 32;
@@ -51,20 +51,22 @@ module coins(
                 coin_attr_reg[k] <= 0;
             end
         end else if(AVL_WRITE && AVL_ADDR[11] && AVL_ADDR <=`COIN_ATTR_REG_END && AVL_ADDR > `GAME_ATTR_REG_END)  // avoid multi-driver by putting AVALON write and hardware write together
-            coin_attr_reg[0] <= AVL_WRITEDATA;
+            coin_attr_reg[AVL_ADDR - `GAME_ATTR_REG_END - 1] <= AVL_WRITEDATA;
         else if (AVL_WRITE && AVL_ADDR[11] && AVL_ADDR <= `SCORE_ATTR_REG_END && AVL_ADDR > `HEALTH_ATTR_REG_END) // avoid multi-driver by putting AVALON write and hardware write together
             score_attr_reg[AVL_ADDR - `HEALTH_ATTR_REG_END - 1] <= AVL_WRITEDATA;
         else begin
-            coin_x[0] <= coin_attr_reg[0][10:1];
-            coin_y[0] <= coin_attr_reg[0][20:11];
+            for(p = 0; p < `COIN_NUM; p = p + 1) begin
+                coin_x[p] <= coin_attr_reg[p][10:1];
+                coin_y[p] <= coin_attr_reg[p][20:11];
+            end
             // if coin is in the tank's range, then update the score, tank's upper left corner is tank_x, tank_y
-            if(coin_x[0] >= tank_x[0] && coin_x[0] < tank_x[0] + tank_width 
+            if(coin_attr_reg[0][0] && coin_x[0] >= tank_x[0] && coin_x[0] < tank_x[0] + tank_width 
             && coin_y[0] >= tank_y[0] && coin_y[0] < tank_y[0] + tank_height) begin // if tank 0 hits any coins
                 score_attr_reg[0] <= score_attr_reg[0] + `GOLD_COIN_VAL;
                 // remove the coin, set the coin's valid bit to 0
                 coin_attr_reg[0][0] <= 1'b0;
             end 
-            else if(coin_x[0] >= tank_x[1] && coin_x[0] < tank_x[1] + tank_width
+            else if(coin_attr_reg[0][0] && coin_x[0] >= tank_x[1] && coin_x[0] < tank_x[1] + tank_width
             && coin_y[0] >= tank_y[1] && coin_y[0] < tank_y[1] + tank_height) begin // if tank 1 hits any coins
                 score_attr_reg[1] <= score_attr_reg[1] + `GOLD_COIN_VAL;
                 // remove the coin, set the coin's valid bit to 0
@@ -72,13 +74,13 @@ module coins(
             end 
 
             // for coin 2 silver coin 
-            else if(coin_x[1] >= tank_x[0] && coin_x[1] < tank_x[0] + tank_width
+            else if(coin_attr_reg[1][0] && coin_x[1] >= tank_x[0] && coin_x[1] < tank_x[0] + tank_width
             && coin_y[1] >= tank_y[0] && coin_y[1] < tank_y[0] + tank_height) begin // if tank 0 hits any coins
                 score_attr_reg[0] <= score_attr_reg[0] + `SILVER_COIN_VAL;
                 // remove the coin, set the coin's valid bit to 0
                 coin_attr_reg[1][0] <= 1'b0;
             end 
-            else if(coin_x[1] >= tank_x[1] && coin_x[1] < tank_x[1] + tank_width
+            else if(coin_attr_reg[1][0] && coin_x[1] >= tank_x[1] && coin_x[1] < tank_x[1] + tank_width
             && coin_y[1] >= tank_y[1] && coin_y[1] < tank_y[1] + tank_height) begin // if tank 1 hits any coins
                 score_attr_reg[1] <= score_attr_reg[1] + `SILVER_COIN_VAL;
                 // remove the coin, set the coin's valid bit to 0
@@ -86,13 +88,13 @@ module coins(
             end 
 
             // for coin 3 copper coin
-            else if(coin_x[2] >= tank_x[0] && coin_x[2] < tank_x[0] + tank_width
+            else if(coin_attr_reg[2][0] && coin_x[2] >= tank_x[0] && coin_x[2] < tank_x[0] + tank_width
             && coin_y[2] >= tank_y[0] && coin_y[2] < tank_y[0] + tank_height) begin // if tank 0 hits any coins
                 score_attr_reg[0] <= score_attr_reg[0] + `BRONZE_COIN_VAL;
                 // remove the coin, set the coin's valid bit to 0
                 coin_attr_reg[2][0] <= 1'b0;
             end 
-            else if(coin_x[2] >= tank_x[1] && coin_x[2] < tank_x[1] + tank_width
+            else if(coin_attr_reg[2][0] && coin_x[2] >= tank_x[1] && coin_x[2] < tank_x[1] + tank_width
             && coin_y[2] >= tank_y[1] && coin_y[2] < tank_y[1] + tank_height) begin // if tank 1 hits any coins
                 score_attr_reg[1] <= score_attr_reg[1] + `BRONZE_COIN_VAL;
                 // remove the coin, set the coin's valid bit to 0
