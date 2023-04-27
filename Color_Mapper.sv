@@ -9,7 +9,9 @@
 * Layer 2 : Text-granular sprites
 */
 
-`define NUM_PALETTE 8
+`define NUM_PALETTE     8
+`define COIN_NUM        3
+`define POS_MASK        ((1<<10) - 1)
 
 module color_mapper(
     input logic CLK, pixel_clk,
@@ -20,17 +22,20 @@ module color_mapper(
     input logic [15:0] char,
     input logic [7:0] font_data,
     input logic [31:0] palette[`NUM_PALETTE],
+    input logic [31:0] coin_attr_reg[`COIN_NUM],
     output logic [7:0] Red, Green, Blue
 );
 
     parameter [5:0] img_width = 32;
     parameter [5:0] img_height = 32;
+    parameter [15:0] coin_width = 16;
+    parameter [15:0] coin_height = 16;
     parameter [1:0] tank_num = 2;
     parameter [7:0] ARRAY_SIZE = 8;
     
     parameter [31:0] Ball_Size = 4;
 
-    logic [9:0] base_x, base_y, background_x, background_y;
+    logic [9:0] base_x, base_y, background_x, background_y, coin_x[`COIN_NUM], coin_y[`COIN_NUM];
     logic [7:0] Rb[8];
     logic [7:0] Gb[8];
     logic [7:0] Bb[8];
@@ -38,12 +43,15 @@ module color_mapper(
     logic [7:0] Gt[8];
     logic [7:0] Bt[8];
     logic [7:0] Rba, Gba, Bba; // background R G B
+    logic [7:0] Rcg, Gcg, Bcg; // gold coin R G B
+    logic [7:0] Rcs, Gcs, Bcs; // silver coin R G B
+    logic [7:0] Rcc, Gcc, Bcc; // copper coin R G B
     logic [7:0] redout, greenout, blueout;
     logic [9:0] BallX[tank_num][ARRAY_SIZE], BallY[tank_num][ARRAY_SIZE];
     logic ball_on[tank_num][ARRAY_SIZE];
     int DistX[tank_num][ARRAY_SIZE], DistY[tank_num][ARRAY_SIZE];
 
-    logic [7:0] i;
+    logic [7:0] i, j; // @note all oocupied, if want new iterator, use k, ...
 	logic [7:0] idx[tank_num], ball_ind;
 
     always_comb begin 
@@ -87,6 +95,19 @@ module color_mapper(
     bricks_example bricks(.DrawX(background_x), .DrawY(background_y), .vga_clk(CLK), 
     .blank(1'b1), .red(Rba), .green(Gba), .blue(Bba));
 
+
+    //  gold example
+    coin_gold_example coin_gold(.DrawX(coin_x[0]), .DrawY(coin_y[0]), .vga_clk(CLK), .blank(1'b1), 
+    .red(Rcg), .green(Gcg), .blue(Bcg));
+
+    // silver example
+    coin_silver_example coin_silver(.DrawX(coin_x[1]), .DrawY(coin_y[1]), .vga_clk(CLK), .blank(1'b1),
+    .red(Rcs), .green(Gcs), .blue(Bcs));
+
+    // copper example
+    coin_copper_example coin_copper(.DrawX(coin_x[2]), .DrawY(coin_y[2]), .vga_clk(CLK), .blank(1'b1),
+    .red(Rcc), .green(Gcc), .blue(Bcc));
+
     // ram needed here (OCM) : needs import dual ports out for software 
     // then every time we get Draw X and Draw Y we check corresponding bytes to get pixel information.
     always_comb
@@ -96,6 +117,12 @@ module color_mapper(
         // because 32x32 is the smallest unit of the background brick
         background_x = (DrawX & (img_width - 1)) * 20; // mod 32
         background_y = (DrawY & (img_height - 1)) * 15; // mod 32
+        // coin_x, coin_y also incorporate the frame number (coin_attr_reg >> 21) which should be within [0, 7]
+        for(j = 0; j < `COIN_NUM; j++) begin
+            coin_x[j] = ((DrawX & (coin_width - 1)) + coin_width * (coin_attr_reg[j] >> 21) ) * 5; // mod 16
+            coin_y[j] = (DrawY & (coin_height - 1)) * 30; // mod 16
+        end
+
         ball_ind = tank_num * ARRAY_SIZE;
         if (blank) begin
             // @todo :  check VRAM if draw text, then  we draw text instead of tanks and background
@@ -196,13 +223,42 @@ module color_mapper(
                 else if(ball_on[1][7]) ball_ind = 15;
                 else ball_ind = tank_num * ARRAY_SIZE;
 
+                // tank and prop layer
 
                 if(ball_ind != tank_num * ARRAY_SIZE) begin
                     redout = 8'hff;
                     greenout = 8'h55;
                     blueout = 8'h00;
                 end 
-                else begin
+                else if( (coin_attr_reg[0] & 1) // if gold coin exist
+                    // and within drawing point is inside the coin (centered at (x,y))
+                    && DrawX >= ((coin_attr_reg[0] >> 1) & `POS_MASK) - (coin_width >> 1) 
+                    && DrawX < ((coin_attr_reg[0] >> 1) & `POS_MASK) + (coin_width >> 1)
+                    && DrawY >= ((coin_attr_reg[0] >> 11) & `POS_MASK) - (coin_height >> 1)
+                    && DrawY < ((coin_attr_reg[0] >> 11) & `POS_MASK) + (coin_height >> 1)
+                 ) begin // gold coin
+                    redout = Rcg;
+                    greenout = Gcg;
+                    blueout = Bcg;
+                 end else if( (coin_attr_reg[1] & 1) // if silver coin exist
+                    && DrawX >= ((coin_attr_reg[1] >> 1) & `POS_MASK) - (coin_width >> 1) 
+                    && DrawX < ((coin_attr_reg[1] >> 1) & `POS_MASK) + (coin_width >> 1)
+                    && DrawY >= ((coin_attr_reg[1] >> 11) & `POS_MASK) - (coin_height >> 1)
+                    && DrawY < ((coin_attr_reg[1] >> 11) & `POS_MASK) + (coin_height >> 1)
+                 ) begin // silver coin
+                    redout = Rcs;
+                    greenout = Gcs;
+                    blueout = Bcs;
+                 end else if( (coin_attr_reg[2] & 1) // if copper coin exist
+                    && DrawX >= ((coin_attr_reg[2] >> 1) & `POS_MASK) - (coin_width >> 1) 
+                    && DrawX < ((coin_attr_reg[2] >> 1) & `POS_MASK) + (coin_width >> 1)
+                    && DrawY >= ((coin_attr_reg[2] >> 11) & `POS_MASK) - (coin_height >> 1)
+                    && DrawY < ((coin_attr_reg[2] >> 11) & `POS_MASK) + (coin_height >> 1)
+                 ) begin // copper coin
+                    redout = Rcc;
+                    greenout = Gcc;
+                    blueout = Bcc;
+                end else begin // background : the last layer
                     redout = Rba;
                     greenout = Gba;
                     blueout = Bba;
@@ -222,3 +278,5 @@ module color_mapper(
         Blue <= blueout;
     end
 endmodule
+
+

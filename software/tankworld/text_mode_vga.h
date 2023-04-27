@@ -25,6 +25,7 @@ struct TEXT_VGA_STRUCT {
 	alt_u32 PALETTE [8]; // VGA palette, can support 16 colors
 	alt_u32 CTRL;  // tank control register
 	alt_u32 game_attr; // game attribute register (start | map_num | maximum health) 
+	// coin attr format : (present_bit | coin_x | coin_y | coin_frame) rest of bits are reserved
 	alt_u32 coin_attr[3]; // coin attribute register : (gold, silver, bronze) 
 	alt_u32 health[2]; // health register
 	alt_u32 score[2]; // score register

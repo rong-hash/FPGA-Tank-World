@@ -77,10 +77,10 @@ void game_init(void) {
     // set the game attributes : not started, map 0, maximum health 5
     vga_ctrl->game_attr = SET_GAME_ATTR_START(0) | SET_GAME_ATTR_MAP_NUM(0) | SET_GAME_ATTR_HEALTH(MAX_HEALTH_DEFAULT);
     // mark all the coins present with default positions
-    vga_ctrl->coin_attr[GOLD_COIN] = GET_POS_COIN(GOLD_COIN_DEFAULT_X, GOLD_COIN_DEFAULT_Y);
-    vga_ctrl->coin_attr[SILVER_COIN] = GET_POS_COIN(SILVER_COIN_DEFAULT_X, SILVER_COIN_DEFAULT_Y);
-    vga_ctrl->coin_attr[BRONZE_COIN] = GET_POS_COIN(BRONZE_COIN_DEFAULT_X, BRONZE_COIN_DEFAULT_Y);
-    // health is read only
+    vga_ctrl->coin_attr[GOLD_COIN] = 1;
+    // vga_ctrl->coin_attr[SILVER_COIN] = GET_POS_COIN(SILVER_COIN_DEFAULT_X, SILVER_COIN_DEFAULT_Y);
+    // vga_ctrl->coin_attr[BRONZE_COIN] = GET_POS_COIN(BRONZE_COIN_DEFAULT_X, BRONZE_COIN_DEFAULT_Y);
+    for(i=0; i<TANK_NUM; i++) vga_ctrl->health[i] = MAX_HEALTH_DEFAULT;
     for(i=0; i<TANK_NUM; i++) vga_ctrl->score[i] = 0;
     vga_ctrl->init_pos[0] = GET_POS(TANK_1_DEAULT_X, TANK_1_DEAULT_Y);
     vga_ctrl->init_pos[1] = GET_POS(TANK_2_DEAULT_X, TANK_2_DEAULT_Y);

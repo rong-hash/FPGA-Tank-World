@@ -78,11 +78,12 @@ logic [15:0] char;
 logic [31:0] TEMP_WRITEDATA;
 logic [31:0] char_data;
 logic [31:0] palette[`NUM_PALETTE];
-logic [9:0] tank1_x, tank1_y, tank2_x, tank2_y;
+logic [9:0] tank_x[`TANK_NUM], tank_y[`TANK_NUM];
 logic [2:0] base1_direction, base2_direction, turret1_direction, turret2_direction;
 logic [31:0] bullet_array[2][8];
+logic hit[`TANK_NUM * `BULLET_NUM][`TANK_NUM]; // hit[i][j] = 1 means bullet i hit tank j
 
-
+// Software Driven Signals : Signals mainly sent by software to hardware
 logic [31:0] control_reg;
 logic [31:0] game_attr_reg;
 logic [31:0] coin_attr_reg[`COIN_NUM];
@@ -90,9 +91,9 @@ logic [31:0] health_attr_reg[`TANK_NUM];
 logic [31:0] score_attr_reg[`TANK_NUM];
 logic [31:0] init_pos_reg[`TANK_NUM];
 logic [31:0] wall_pos_reg[`WALL_NUM];
+// Hardware Driven Signals : Signals mainly sent by hardware to software
 logic [31:0] bullet_num_reg[`TANK_NUM];
 logic [31:0] tank_pos_reg[`TANK_NUM];
-
 
 
 // logic fire[2];
@@ -120,6 +121,7 @@ ram my_vram(.address_a(AVL_ADDR[10:0]), .address_b(index), .byteena_a(AVL_BYTE_E
 // 		control_reg <= AVL_WRITEDATA;
 // end
 
+
 // palette : before control register and after vram
 // RD_DATA2 stores the data after VRAM (with word address >= 2048)
 // VRAM starts with a palette, following a series of attribute registers
@@ -133,20 +135,14 @@ always_ff @(posedge CLK ) begin
 			control_reg <= AVL_WRITEDATA;
 		else if(AVL_ADDR <= `GAME_ATTR_REG_END)
 			game_attr_reg[AVL_ADDR - `CTRL_REG_END - 1] <= AVL_WRITEDATA;
-		else if(AVL_ADDR <= `COIN_ATTR_REG_END)
-			coin_attr_reg[AVL_ADDR - `GAME_ATTR_REG_END - 1] <= AVL_WRITEDATA;
-		else if(AVL_ADDR <= `HEALTH_ATTR_REG_END)
-			health_attr_reg[AVL_ADDR - `COIN_ATTR_REG_END - 1] <= AVL_WRITEDATA;
-		else if(AVL_ADDR <= `SCORE_ATTR_REG_END)
-			score_attr_reg[AVL_ADDR - `HEALTH_ATTR_REG_END - 1] <= AVL_WRITEDATA;
-		else if(AVL_ADDR <= `INIT_POS_REG_END)
-			init_pos_reg[AVL_ADDR - `SCORE_ATTR_REG_END - 1] <= AVL_WRITEDATA;
-		else if(AVL_ADDR <= `WALL_POS_REG_END)
-			wall_pos_reg[AVL_ADDR - `INIT_POS_REG_END - 1] <= AVL_WRITEDATA;
-		else if(AVL_ADDR <= `BULLET_NUM_REG_END)
-			bullet_num_reg[AVL_ADDR - `WALL_POS_REG_END - 1] <= AVL_WRITEDATA;
-		else if(AVL_ADDR <= `TANK_POS_REG_END)
-			tank_pos_reg[AVL_ADDR - `BULLET_NUM_REG_END - 1] <= AVL_WRITEDATA;
+		else if(AVL_ADDR > `COIN_ATTR_REG_END) begin 
+			if(AVL_ADDR > `SCORE_ATTR_REG_END) begin
+				if(AVL_ADDR <= `INIT_POS_REG_END)
+					init_pos_reg[AVL_ADDR - `SCORE_ATTR_REG_END - 1] <= AVL_WRITEDATA;
+				else if(AVL_ADDR <= `WALL_POS_REG_END)
+					wall_pos_reg[AVL_ADDR - `INIT_POS_REG_END - 1] <= AVL_WRITEDATA;
+			end
+		end
 	end else if(AVL_READ && AVL_ADDR[11]) begin
 		if(AVL_ADDR <= `PALETTE_END)
 			RD_DATA2 <= palette[AVL_ADDR[2:0]];
@@ -170,6 +166,9 @@ always_ff @(posedge CLK ) begin
 			RD_DATA2 <= tank_pos_reg[AVL_ADDR - `BULLET_NUM_REG_END - 1];
 	end
 end
+
+
+
 // This is address splitter splitter VRAM (OCM) and other registers (not necessarily OCM)
 always_comb begin
 	unique case (AVL_ADDR[11]) 
@@ -186,23 +185,36 @@ assign font_addr = {char[14:8], DrawY[3:0]};
 
 // below are motion engines (input keycode, output tank position and direction)
 tank_position_direction my_tank(.keycode(control_reg), .Reset(RESET), .frame_clk(vs), 
-			.tank_x1out(tank1_x), .tank_y1out(tank1_y), .tank_x2out(tank2_x), .tank_y2out(tank2_y),
+			.tank_x1out(tank_x[0]), .tank_y1out(tank_y[0]), .tank_x2out(tank_x[1]), .tank_y2out(tank_y[1]),
 			.base1_directionout(base1_direction), .turret1_directionout(turret1_direction), 
 			.base2_directionout(base2_direction), .turret2_directionout(turret2_direction),
-			.bullet_array(bullet_array), .hole_ind(hole_ind));
+			.bullet_array(bullet_array), .hole_ind(hole_ind), .hit(hit));
 
 color_mapper mapper(.CLK(CLK), .pixel_clk(pixel_clk), .DrawX(DrawX), .DrawY(DrawY), 
-					.tank1_x(tank1_x), .tank2_x(tank2_x), .tank1_y(tank1_y), .tank2_y(tank2_y),
+					.tank1_x(tank_x[0]), .tank2_x(tank_x[1]), .tank1_y(tank_y[0]), .tank2_y(tank_y[1]),
 					.base1_direction(base1_direction), .turret1_direction(turret1_direction), 
 					.base2_direction(base2_direction), .turret2_direction(turret2_direction),
 					.bullet_array(bullet_array),
-					.char(char), .font_data(font_data), .palette(palette),
+					.char(char), .font_data(font_data), .palette(palette), .coin_attr_reg(coin_attr_reg),
 					.blank(blank), .Red(red), .Green(green), .Blue(blue));
+
+feedback feedback(.frame_clk(vs), .Reset(RESET), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR),
+					.AVL_WRITEDATA(AVL_WRITEDATA), .bullet_array(bullet_array), .tank_x(tank_x), 
+					.tank_y(tank_y), .hit(hit), .bullet_num_reg(bullet_num_reg), 
+					.tank_pos_reg(tank_pos_reg), .health_attr_reg_out(health_attr_reg));
+
+coins coins(.Reset(RESET), .CLK(CLK), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR), 
+			.AVL_WRITEDATA(AVL_WRITEDATA), .tank_x(tank_x), .tank_y(tank_y), 
+			.score_attr_reg(score_attr_reg), .coin_attr_reg_out(coin_attr_reg));
+
 
 // assign debug1 = {bullet_array[0][0][0], bullet_array[0][1][0], bullet_array[0][2][0], bullet_array[0][3][0], bullet_array[0][4][0], bullet_array[0][5][0], bullet_array[0][6][0], bullet_array[0][7][0]};
 // assign debug2 = {bullet_array[1][0][0], bullet_array[1][1][0], bullet_array[1][2][0], bullet_array[1][3][0], bullet_array[1][4][0], bullet_array[1][5][0], bullet_array[1][6][0], bullet_array[1][7][0]};
-assign debug1 = {bullet_array[0][7][8:1]};
-assign debug2 = {bullet_array[1][7][8:1]};
+// assign debug1 = {bullet_array[0][7][8:1]};
+// assign debug2 = {bullet_array[1][7][8:1]};
+
+assign debug1 = coin_attr_reg[0][7:0]; // 1 | (x<<1)
+assign debug2 = coin_attr_reg[0][18:11]; // y
 
 
 endmodule

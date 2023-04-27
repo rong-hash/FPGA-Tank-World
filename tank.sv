@@ -12,6 +12,9 @@
 //    UIUC ECE Department                                                --
 //-------------------------------------------------------------------------
 
+`define TANK_WIDTH 			32
+`define TANK_HEIGHT 		32
+`define TANK_NUM 			2
 
 module update_base(
 	input logic [7:0] keycode,
@@ -113,9 +116,10 @@ module update_turret(
 endmodule
 
 
-
 module  ball (input logic [31:0] bullet,
-			output logic [31:0] next_bullet
+			input logic [9:0] tank_x[`TANK_NUM], tank_y[`TANK_NUM],
+			output logic [31:0] next_bullet,
+			output logic hit[`TANK_NUM]
 );
     
     logic [9:0] Ball_X_Pos, Ball_X_Motion, Ball_Y_Pos, Ball_Y_Motion, Ball_Size;
@@ -131,8 +135,8 @@ module  ball (input logic [31:0] bullet,
     parameter [9:0] Ball_Y_Step=1;      // Step size on the Y axis
 
     assign Ball_Size = 4;  // assigns the value 4 as a 10-digit binary number, ie "0000000100"
-   
-	 
+	int k;
+
 	always_comb
     begin 
 		// bullet[i] = (bullet_array[i][hole_ind[i]] & 1) | (turret_direction[i] << 1) | (tank_x[i] << 9) | (tank_y[i] << 19)
@@ -140,6 +144,15 @@ module  ball (input logic [31:0] bullet,
 		Ball_Y_Pos = (bullet >> 19) & 1023;
 		next_dir = dir;
 		dir = (bullet >> 1) & 7;
+
+		for(k = 0; k < `TANK_NUM; k = k + 1) begin
+			if((bullet & 1) && Ball_X_Pos >= tank_x[k] && Ball_X_Pos < tank_x[k] + `TANK_WIDTH &&
+				Ball_Y_Pos >= tank_y[k] && Ball_Y_Pos < tank_y[k] + `TANK_HEIGHT 
+			) 
+				hit[k] = 1'b1;
+			else  
+				hit[k] = 1'b0;
+		end
 
 		//@note dir 0 is up, 1 is up left, 2 is left, 3 is down left, 4 is down, 5 is down right, 6 is right, 7 is up right
 		case (dir)
@@ -230,8 +243,8 @@ module  ball (input logic [31:0] bullet,
 		end
 
     end
-
-	assign next_bullet = (bullet & 1) ? ((bullet & 1) | (next_dir << 1) | (next_Ball_X_Pos << 9) | (next_Ball_Y_Pos << 19)) : 0;
+	// if bullet existed and doesn't hit any tanks, update bullet position, otherwise set it to 0
+	assign next_bullet = ((bullet & 1) && !hit[0] && !hit[1])  ? ((bullet & 1) | (next_dir << 1) | (next_Ball_X_Pos << 9) | (next_Ball_Y_Pos << 19)) : 0;
 
 endmodule
 
@@ -243,7 +256,8 @@ module tank_position_direction(
 	output logic [9:0] tank_x1out, tank_y1out, tank_x2out, tank_y2out, 
 	output logic[2:0] base1_directionout, turret1_directionout, base2_directionout, turret2_directionout,
 	output logic [31:0] bullet_array[2][8],
-	output logic [7:0] hole_ind[2]
+	output logic [7:0] hole_ind[2],
+	output logic hit[tank_num * ARRAY_SIZE][tank_num] // hit[i][j] = 1 means bullet i hit tank j
 	// output logic fire[2]
 );
 	
@@ -294,9 +308,10 @@ module tank_position_direction(
 	logic [7:0] fire_scc[tank_num]; // fire slow clock counter
 	logic [7:0] next_fire_scc[tank_num]; // fire slow clock counter
 
+
 	// attribute registers for tank
 	logic [9:0] alive_bullet_cnt[tank_num][ARRAY_SIZE]; // not 0 means alive, incremented by 1 every frame
-
+	
 	assign tank2_turret = keycode[7:0];
 	assign tank2_base = keycode[15:8];
 	assign tank1_turret = keycode[23:16];
@@ -387,7 +402,7 @@ module tank_position_direction(
 					
 					end
 					else begin
-						bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] + (tank_width >> 1))<< 9) | ((tank_y[i] + (tank_height >> 1)) << 19));
+						bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] + (tank_width >> 1))<< 9) | ((tank_y[i] - 1) << 19));
 						alive_bullet_cnt[i][hole_ind[i]] <= 1;
 					end
 			end
@@ -407,22 +422,38 @@ module tank_position_direction(
 	update_turret turret2(.keycode(tank2_turret), .turret_direction(turret_direction[1]), .fire(fire[1]), .fire_scc(fire_scc[1]),
 	.next_turret_direction(next_turret_direction[1]), .next_fire(next_fire[1]), .next_fire_scc(next_fire_scc[1]));
 	// tank bullet : allow each tank to have up to 8 bullets on the screen at once 
-	ball ball01(.bullet(bullet_array[0][0]), .next_bullet(next_bullet_array[0][0]));
-	ball ball02(.bullet(bullet_array[0][1]), .next_bullet(next_bullet_array[0][1]));
-	ball ball03(.bullet(bullet_array[0][2]), .next_bullet(next_bullet_array[0][2]));
-	ball ball04(.bullet(bullet_array[0][3]), .next_bullet(next_bullet_array[0][3]));
-	ball ball05(.bullet(bullet_array[0][4]), .next_bullet(next_bullet_array[0][4]));
-	ball ball06(.bullet(bullet_array[0][5]), .next_bullet(next_bullet_array[0][5]));
-	ball ball07(.bullet(bullet_array[0][6]), .next_bullet(next_bullet_array[0][6]));
-	ball ball08(.bullet(bullet_array[0][7]), .next_bullet(next_bullet_array[0][7]));
-	ball ball11(.bullet(bullet_array[1][0]), .next_bullet(next_bullet_array[1][0]));
-	ball ball12(.bullet(bullet_array[1][1]), .next_bullet(next_bullet_array[1][1]));
-	ball ball13(.bullet(bullet_array[1][2]), .next_bullet(next_bullet_array[1][2]));
-	ball ball14(.bullet(bullet_array[1][3]), .next_bullet(next_bullet_array[1][3]));
-	ball ball15(.bullet(bullet_array[1][4]), .next_bullet(next_bullet_array[1][4]));
-	ball ball16(.bullet(bullet_array[1][5]), .next_bullet(next_bullet_array[1][5]));
-	ball ball17(.bullet(bullet_array[1][6]), .next_bullet(next_bullet_array[1][6]));
-	ball ball18(.bullet(bullet_array[1][7]), .next_bullet(next_bullet_array[1][7]));
+	ball ball01(.bullet(bullet_array[0][0]), .next_bullet(next_bullet_array[0][0]), 
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[0]));
+	ball ball02(.bullet(bullet_array[0][1]), .next_bullet(next_bullet_array[0][1]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[1]));
+	ball ball03(.bullet(bullet_array[0][2]), .next_bullet(next_bullet_array[0][2]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[2]));
+	ball ball04(.bullet(bullet_array[0][3]), .next_bullet(next_bullet_array[0][3]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[3]));
+	ball ball05(.bullet(bullet_array[0][4]), .next_bullet(next_bullet_array[0][4]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[4]));
+	ball ball06(.bullet(bullet_array[0][5]), .next_bullet(next_bullet_array[0][5]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[5]));
+	ball ball07(.bullet(bullet_array[0][6]), .next_bullet(next_bullet_array[0][6]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[6]));
+	ball ball08(.bullet(bullet_array[0][7]), .next_bullet(next_bullet_array[0][7]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[7]));
+	ball ball11(.bullet(bullet_array[1][0]), .next_bullet(next_bullet_array[1][0]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[8]));
+	ball ball12(.bullet(bullet_array[1][1]), .next_bullet(next_bullet_array[1][1]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[9]));
+	ball ball13(.bullet(bullet_array[1][2]), .next_bullet(next_bullet_array[1][2]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[10]));
+	ball ball14(.bullet(bullet_array[1][3]), .next_bullet(next_bullet_array[1][3]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[11]));
+	ball ball15(.bullet(bullet_array[1][4]), .next_bullet(next_bullet_array[1][4]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[12]));
+	ball ball16(.bullet(bullet_array[1][5]), .next_bullet(next_bullet_array[1][5]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[13]));
+	ball ball17(.bullet(bullet_array[1][6]), .next_bullet(next_bullet_array[1][6]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[14]));
+	ball ball18(.bullet(bullet_array[1][7]), .next_bullet(next_bullet_array[1][7]),
+	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[15]));
 
     assign tank_x1out = tank_x[0];
 	assign tank_x2out = tank_x[1];
