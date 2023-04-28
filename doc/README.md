@@ -348,6 +348,113 @@ If it's not hit by a tank, then we increment the frame number of the coin. Each 
 
 Currently the frame is in `coin_attr_reg[i][23:21]`. 
 
-It's updated with the help of coin counter (associated with `50MHz` FPGA clock) which is a 26 bit regiser.
+It's updated with the help of coin counter (associated with `50MHz` FPGA clock) which is a 26 bit regiser (50M Hz is approx. 26 bit width).
 
 ` logic [25:0] coin_cnt; // 50MHz clock counter for coin make frame advance every second`
+
+---
+
+### Walls, bullets and contentions
+
+Walls and bullet is trick in that
+
+* 16 walls and 16 bullets and 4 sides means 1024 conditions which needs 1024 modules.
+
+* The design pattern is crucial here to reduce the work needed in coding perspective.
+
+---
+
+
+#### Walls and bullets 
+
+For each bullet we have a ball module which is used to find the next bullet position using `always_comb` logic.
+
+We can only consider each bullet at a time.
+
+This reduce 1024 conditions to 64 conditions.
+
+---
+
+#### Walls and bullets
+This means, in coding sense
+
+```sv
+
+module balls(...);
+
+// 64 if-else 
+
+
+endmodules
+
+```
+We think although it would be cool to have this, 64 if-else if too much for our design, and it's moot to have such crazy logic. (It's not going to help me become a better FPGA developers).
+
+
+---
+
+#### Simplication on Walls and bullets 
+
+
+So we decide to simplify the logic and spend time on valuable things like sound card.
+
+Currently, when the bullet hits the boundary, it will bounce.
+
+When the bullet hits the wall, it will be absorbed.
+
+this makes our module with only 16 `if-else` statement to check and we can use 1 bit `logic absorbed;` register so that the `next_bullet` will be 
+
+```sv
+assign next_bullet = ((bullet & 1) && !hit[0] && !hit[1] && !absorbed)  ? ((bullet & 1) | 
+(next_dir << 1) | (next_Ball_X_Pos << 9) | (next_Ball_Y_Pos << 19)) : 0;
+```
+
+---
+
+#### More notes on simplification for walls and bullets 
+
+Bullet array is in the following format
+
+```sv
+bullet = (valid) | (dir << 1) | (x << 9) | (x << 19)
+```
+
+current logic only let `walls` to influence the `valid` bit just like the impact of `hit` bit on the bullet
+
+With the next slide, to draw the wall and the correponding hardware parts in `Color_mapper.sv`, we can draw the walls and make walls able to absorb bullets.
+
+---
+
+#### Software wall drawing
+
+In software, we need to go to `game.c` `game_init()` function to set up the walls.
+
+Note that `wall_pos` is the field related to walls and it's also in form of `valid | (x<<1) | (y<<11)`
+
+Currently we have 
+
+```c
+	for(i=0; i<16; i++) vga_ctrl->wall_pos[i] = 0;
+```
+
+and we need to change some of the walls to be valid and with reasonable positions.
+
+---
+
+#### Contentions and walls, tanks
+
+Tank should not go through tanks and walls.
+
+So when you update tanks, you need to check if the next position is in tank / walls then you update the next positions.
+
+If you don't have co-pilot then you should use chatgpt / python to do it.
+
+---
+
+#### Props 
+
+
+* Coins need to be re-generated in software level (every time you update the score board, also check the corresponding registers). 
+
+* Add speed and health gear. (Check `coin.sv`, the logic is exactly the same) 
+  * We need to make bullet speed and tank speed adjustable.
