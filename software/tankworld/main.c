@@ -274,9 +274,13 @@ int main() {
 				// setKeycode(kbdbuf.keycode[0]);
 				// write the key code to the ram
 				if((vga_ctrl->game_attr & 1)) {
-					draw_status_bars();
-					code = transfer_code((char*)kbdbuf.keycode);
-					ramsetctl(code);
+					if(vga_ctrl->health[0] == 0 || vga_ctrl->health[1] == 0) {
+						draw_score_panel();
+					} else {
+						draw_status_bars();
+						code = transfer_code((char*)kbdbuf.keycode);
+						ramsetctl(code);
+					}
 				} else {
 					menu_control((char*)kbdbuf.keycode);
 				}

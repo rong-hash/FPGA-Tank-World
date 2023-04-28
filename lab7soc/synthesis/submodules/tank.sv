@@ -402,7 +402,16 @@ module tank_position_direction(
 					
 					end
 					else begin
-						bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] + (tank_width >> 1))<< 9) | ((tank_y[i] - 1) << 19));
+						case (turret_direction[i][6:4]) //@note dir 0 is up, 1 is up left, 2 is left, 3 is down left, 4 is down, 5 is down right, 6 is right, 7 is up right
+							7: bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] + tank_width) << 9) | ((tank_y[i] - 1) << 19));
+							6: bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] + tank_width) << 9) | ((tank_y[i] + (tank_width >> 1)) << 19));
+							5: bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] + tank_width) << 9) | ((tank_y[i] + tank_height) << 19));
+							4: bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] + (tank_width >> 1))<< 9) | ((tank_y[i] + tank_height) << 19));
+							3: bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] - 1) << 9) | ((tank_y[i] + tank_height) << 19));
+							2: bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] - 1) << 9) | ((tank_y[i] + (tank_width >> 1)) << 19));
+							1: bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] - 1) << 9) | ((tank_y[i] - 1) << 19));
+							0: bullet_array[i][hole_ind[i]] <= (1'b1 | (turret_direction[i][6:4] << 1) | ( (tank_x[i] + (tank_width >> 1))<< 9) | ((tank_y[i] - 1) << 19));
+						endcase
 						alive_bullet_cnt[i][hole_ind[i]] <= 1;
 					end
 			end

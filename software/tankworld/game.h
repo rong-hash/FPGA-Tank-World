@@ -14,4 +14,6 @@ void show_menu(void);
 void draw_status_bars(void);
 
 void menu_control(char* key);
+
+void draw_score_panel(void);
 #endif /*_GAME_H_*/

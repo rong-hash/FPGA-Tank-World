@@ -59,6 +59,7 @@
 #define FONT_COLOR                  6  // brown
 #define HIGH_LIGHT_PADDING_COLOR    1  // blue
 #define HIGH_LIGHT_FONT_COLOR       15 // white
+#define WIN_COLOR                   4 // red
 
 // STATUS BARS
 #define STATUS_BAR_LEN              10
@@ -66,8 +67,20 @@
 #define TANK_1_STATUS_BAR_Y         1
 #define TANK_1_STATUS_BAR_X         1
 
-#define TANK_2_STATUS_BAR_X         (TEXT_SCREEN_X - STATUS_BAR_LEN - 1)
+#define TANK_2_STATUS_BAR_X         (TEXT_SCREEN_X - STATUS_BAR_LEN - 2)
 #define TANK_2_STATUS_BAR_Y         1
+
+// SCORE PANEL
+#define SCORE_PANEL_X               ((TEXT_SCREEN_X - SCORE_PANEL_WIDTH) >> 1)
+#define SCORE_PANEL_Y               10
+
+#define SCORE_PANEL_HEIGHT          22
+#define SCORE_PANEL_WIDTH           40
+
+
+#define SCORE_PANEL_UPER_PADDING    4
+#define SCORE_PANEL_PADDING_1       6
+#define SCORE_PANEL_PADDING_2       2
 
 static int cursor_pos = MENU_START_ROW_IND; // cursor position, 0 for start, 1 for map, 2 for settings
 
@@ -153,6 +166,53 @@ void draw_status_bars(void) {
     textVGADrawColorText(color_string, TANK_2_STATUS_BAR_X, y++, PADDING_COLOR, FONT_COLOR);
     sprintf(color_string, "BULLETS: %01lu", vga_ctrl->bullet_num[1]);
     textVGADrawColorText(color_string, TANK_2_STATUS_BAR_X, y++, PADDING_COLOR, FONT_COLOR);
+}
+
+void draw_score_panel(void) {
+    char color_string[80];
+    int y;
+    y = SCORE_PANEL_Y;
+    if(vga_ctrl->health[0]) {// player left wins,  display "WIN  LOSE" split string into 2 length 20 string, center WIN, LOSE respectively
+        sprintf(color_string, "        WIN         ");
+        textVGADrawColorText(color_string, SCORE_PANEL_X, y, PADDING_COLOR, WIN_COLOR);
+        sprintf(color_string, "        LOSE        ");
+        textVGADrawColorText(color_string, SCORE_PANEL_X + 20, y++, PADDING_COLOR, FONT_COLOR);
+    }
+    else {// player right wins, display "LOSE  WIN"
+        sprintf(color_string, "        LOSE        ");
+        textVGADrawColorText(color_string, SCORE_PANEL_X, y, PADDING_COLOR, FONT_COLOR);
+        sprintf(color_string, "        WIN         ");
+        textVGADrawColorText(color_string, SCORE_PANEL_X + 20, y++, PADDING_COLOR, WIN_COLOR);
+    }
+    // draw padding 1
+    for(int i = 0; i < SCORE_PANEL_PADDING_1; i++) {
+        sprintf(color_string, "                                        ");
+        textVGADrawColorText(color_string, SCORE_PANEL_X, y++, PADDING_COLOR, PADDING_COLOR);
+    }
+    // draw the score
+    
+    sprintf(color_string, "     SCORE: %03lu     ", vga_ctrl->score[0]);
+    textVGADrawColorText(color_string, SCORE_PANEL_X, y, PADDING_COLOR, FONT_COLOR);
+    sprintf(color_string, "     SCORE: %03lu     ", vga_ctrl->score[1]);
+    textVGADrawColorText(color_string, SCORE_PANEL_X + 20, y++, PADDING_COLOR, FONT_COLOR);
+
+    // draw padding 2
+    for(int i = 0; i < SCORE_PANEL_PADDING_2; i++) {
+        sprintf(color_string, "                                        ");
+        textVGADrawColorText(color_string, SCORE_PANEL_X, y++, PADDING_COLOR, PADDING_COLOR);
+    }
+
+    // draw the health
+    sprintf(color_string, "     HEALTH:  %01lu     ", vga_ctrl->health[0]);
+    textVGADrawColorText(color_string, SCORE_PANEL_X, y, PADDING_COLOR, FONT_COLOR);
+    sprintf(color_string, "     HEALTH:  %01lu     ", vga_ctrl->health[1]);
+    textVGADrawColorText(color_string, SCORE_PANEL_X + 20, y++, PADDING_COLOR, FONT_COLOR);
+    
+    // draw padding 3
+    for(int i = 0; i < SCORE_PANEL_Y + SCORE_PANEL_HEIGHT - y; i++) {
+        sprintf(color_string, "                                        ");
+        textVGADrawColorText(color_string, SCORE_PANEL_X, y++, PADDING_COLOR, PADDING_COLOR);
+    }
 }
 
 /**
