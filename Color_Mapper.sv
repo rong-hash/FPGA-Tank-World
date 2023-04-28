@@ -11,6 +11,9 @@
 
 `define NUM_PALETTE     8
 `define COIN_NUM        3
+`define WALL_NUM        16
+`define WALL_WIDTH      32
+`define WALL_HEIGHT     32
 `define POS_MASK        ((1<<10) - 1)
 
 module color_mapper(
@@ -23,6 +26,7 @@ module color_mapper(
     input logic [7:0] font_data,
     input logic [31:0] palette[`NUM_PALETTE],
     input logic [31:0] coin_attr_reg[`COIN_NUM],
+    input logic [31:0] wall_pos_reg[`WALL_NUM],
     output logic [7:0] Red, Green, Blue
 );
 
@@ -33,7 +37,7 @@ module color_mapper(
     
     parameter [31:0] Ball_Size = 4;
 
-    logic [9:0] base_x, base_y, background_x, background_y, coin_x[`COIN_NUM], coin_y[`COIN_NUM];
+    logic [9:0] base_x, base_y, background_x, background_y, coin_x[`COIN_NUM], coin_y[`COIN_NUM], wall_x[`WALL_NUM], wall_y[`WALL_NUM];
     logic [7:0] Rb[8];
     logic [7:0] Gb[8];
     logic [7:0] Bb[8];
@@ -44,12 +48,13 @@ module color_mapper(
     logic [7:0] Rcg, Gcg, Bcg; // gold coin R G B
     logic [7:0] Rcs, Gcs, Bcs; // silver coin R G B
     logic [7:0] Rcc, Gcc, Bcc; // copper coin R G B
+    logic [7:0] Rw[`WALL_NUM], Gw[`WALL_NUM], Bw[`WALL_NUM]; // wall R G B
     logic [7:0] redout, greenout, blueout;
     logic [9:0] BallX[tank_num][ARRAY_SIZE], BallY[tank_num][ARRAY_SIZE];
     logic ball_on[tank_num][ARRAY_SIZE];
     int DistX[tank_num][ARRAY_SIZE], DistY[tank_num][ARRAY_SIZE];
 
-    logic [7:0] i, j; // @note all oocupied, if want new iterator, use k, ...
+    logic [7:0] i, j, k; // @note all oocupied, if want new iterator, use k, ...
 	logic [7:0] idx[tank_num], ball_ind;
 
     always_comb begin 
@@ -92,7 +97,23 @@ module color_mapper(
     // background (bricks) rom
     bricks_example bricks(.DrawX(background_x), .DrawY(background_y), .vga_clk(CLK), 
     .blank(1'b1), .red(Rba), .green(Gba), .blue(Bba));
-
+    // Wall Rom
+    stone_example wall_0(.DrawX(wall_x[0]), .DrawY(wall_y[0]), .vga_clk(CLK), .blank(1'b1), .red(Rw[0]), .green(Gw[0]), .blue(Bw[0]));
+    stone_example wall_1(.DrawX(wall_x[1]), .DrawY(wall_y[1]), .vga_clk(CLK), .blank(1'b1), .red(Rw[1]), .green(Gw[1]), .blue(Bw[1]));
+    stone_example wall_2(.DrawX(wall_x[2]), .DrawY(wall_y[2]), .vga_clk(CLK), .blank(1'b1), .red(Rw[2]), .green(Gw[2]), .blue(Bw[2]));
+    stone_example wall_3(.DrawX(wall_x[3]), .DrawY(wall_y[3]), .vga_clk(CLK), .blank(1'b1), .red(Rw[3]), .green(Gw[3]), .blue(Bw[3]));
+    stone_example wall_4(.DrawX(wall_x[4]), .DrawY(wall_y[4]), .vga_clk(CLK), .blank(1'b1), .red(Rw[4]), .green(Gw[4]), .blue(Bw[4]));
+    stone_example wall_5(.DrawX(wall_x[5]), .DrawY(wall_y[5]), .vga_clk(CLK), .blank(1'b1), .red(Rw[5]), .green(Gw[5]), .blue(Bw[5]));
+    stone_example wall_6(.DrawX(wall_x[6]), .DrawY(wall_y[6]), .vga_clk(CLK), .blank(1'b1), .red(Rw[6]), .green(Gw[6]), .blue(Bw[6]));
+    stone_example wall_7(.DrawX(wall_x[7]), .DrawY(wall_y[7]), .vga_clk(CLK), .blank(1'b1), .red(Rw[7]), .green(Gw[7]), .blue(Bw[7]));
+    stone_example wall_8(.DrawX(wall_x[8]), .DrawY(wall_y[8]), .vga_clk(CLK), .blank(1'b1), .red(Rw[8]), .green(Gw[8]), .blue(Bw[8]));
+    stone_example wall_9(.DrawX(wall_x[9]), .DrawY(wall_y[9]), .vga_clk(CLK), .blank(1'b1), .red(Rw[9]), .green(Gw[9]), .blue(Bw[9]));
+    stone_example wall_10(.DrawX(wall_x[10]), .DrawY(wall_y[10]), .vga_clk(CLK), .blank(1'b1), .red(Rw[10]), .green(Gw[10]), .blue(Bw[10]));
+    stone_example wall_11(.DrawX(wall_x[11]), .DrawY(wall_y[11]), .vga_clk(CLK), .blank(1'b1), .red(Rw[11]), .green(Gw[11]), .blue(Bw[11]));
+    stone_example wall_12(.DrawX(wall_x[12]), .DrawY(wall_y[12]), .vga_clk(CLK), .blank(1'b1), .red(Rw[12]), .green(Gw[12]), .blue(Bw[12]));
+    stone_example wall_13(.DrawX(wall_x[13]), .DrawY(wall_y[13]), .vga_clk(CLK), .blank(1'b1), .red(Rw[13]), .green(Gw[13]), .blue(Bw[13]));
+    stone_example wall_14(.DrawX(wall_x[14]), .DrawY(wall_y[14]), .vga_clk(CLK), .blank(1'b1), .red(Rw[14]), .green(Gw[14]), .blue(Bw[14]));
+    stone_example wall_15(.DrawX(wall_x[15]), .DrawY(wall_y[15]), .vga_clk(CLK), .blank(1'b1), .red(Rw[15]), .green(Gw[15]), .blue(Bw[15]));
 
     //  gold example
     coin_gold_example coin_gold(.DrawX(coin_x[0]), .DrawY(coin_y[0]), .vga_clk(CLK), .blank(1'b1), 
@@ -116,9 +137,15 @@ module color_mapper(
         background_x = (DrawX & (img_width - 1)) * 20; // mod 32
         background_y = (DrawY & (img_height - 1)) * 15; // mod 32
         // coin_x, coin_y also incorporate the frame number (coin_attr_reg >> 21) which should be within [0, 7]
-        for(j = 0; j < `COIN_NUM; j++) begin
-            coin_x[j] = 0; 
-            coin_y[j] = 0; 
+        for(j = 0; j < `COIN_NUM; j = j + 1) begin
+            // (coin_attr_reg[j][10:1] - 8, coin_attr_reg[j][20:11] - 8) should be upper left corner of the coin 8 is half of the coin width / height
+            coin_x[j] = (DrawX - (coin_attr_reg[j][10:1] - 8) + coin_attr_reg[j][23:21]* 16) * 5; 
+            coin_y[j] = (DrawY - (coin_attr_reg[j][20:11]  - 8)) * 30;
+        end
+
+        for(k = 0; k < `WALL_NUM ; k = k + 1) begin
+            wall_x[k] = (DrawX - wall_pos_reg[k][10:1]) * 20;
+            wall_y[k] = (DrawY - wall_pos_reg[k][20:11]) * 15;
         end
 
         ball_ind = tank_num * ARRAY_SIZE;
@@ -235,8 +262,6 @@ module color_mapper(
                     && DrawY >= coin_attr_reg[0][20:11]  - 8
                     && DrawY < coin_attr_reg[0][20:11] + 8
                  ) begin // gold coin
-                    coin_x[0] = (DrawX - (coin_attr_reg[0][10:1] - 8)) * 5;
-                    coin_y[0] = (DrawY - (coin_attr_reg[0][20:11]  - 8)) * 30;
                     if((Rcg | Gcg | Bcg) != 8'h0) begin
                         redout = Rcg;
                         greenout = Gcg;
@@ -253,8 +278,6 @@ module color_mapper(
                 && DrawY >= coin_attr_reg[1][20:11]  - 8
                 && DrawY < coin_attr_reg[1][20:11] + 8
                 ) begin // silver coin
-                    coin_x[1] = (DrawX - (coin_attr_reg[1][10:1] - 8) + coin_attr_reg[1][23:21]* 16)  * 5;
-                    coin_y[1] = (DrawY - (coin_attr_reg[1][20:11]  - 8)) * 30;
                     if((Rcs | Gcs | Bcs) != 8'h0) begin
                         redout = Rcs;
                         greenout = Gcs;
@@ -270,8 +293,6 @@ module color_mapper(
                 && DrawY >= coin_attr_reg[2][20:11]  - 8
                 && DrawY < coin_attr_reg[2][20:11] + 8
                 ) begin // copper coin
-                    coin_x[2] = (DrawX - (coin_attr_reg[2][10:1] - 8) + coin_attr_reg[2][23:21]* 16) * 5;
-                    coin_y[2] = (DrawY - (coin_attr_reg[2][20:11]  - 8)) * 30;
                     if((Rcc | Gcc | Bcc) != 8'h0) begin
                         redout = Rcc;
                         greenout = Gcc;
@@ -281,7 +302,248 @@ module color_mapper(
                         greenout = Gba;
                         blueout = Bba;
                     end
-                end else begin // background : the last layer
+                end else if(wall_pos_reg[0][0]
+                && DrawX >= wall_pos_reg[0][10:1]
+                && DrawX < wall_pos_reg[0][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[0][20:11]
+                && DrawY < wall_pos_reg[0][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[0] | Gw[0] | Bw[0]) != 8'h0) begin
+                        redout = Rw[0];
+                        greenout = Gw[0];
+                        blueout = Bw[0];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[1][0]
+                && DrawX >= wall_pos_reg[1][10:1]
+                && DrawX < wall_pos_reg[1][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[1][20:11]
+                && DrawY < wall_pos_reg[1][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[1] | Gw[1] | Bw[1]) != 8'h0) begin
+                        redout = Rw[1];
+                        greenout = Gw[1];
+                        blueout = Bw[1];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[2][0]
+                && DrawX >= wall_pos_reg[2][10:1]
+                && DrawX < wall_pos_reg[2][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[2][20:11]
+                && DrawY < wall_pos_reg[2][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[2] | Gw[2] | Bw[2]) != 8'h0) begin
+                        redout = Rw[2];
+                        greenout = Gw[2];
+                        blueout = Bw[2];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[3][0]
+                && DrawX >= wall_pos_reg[3][10:1]
+                && DrawX < wall_pos_reg[3][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[3][20:11]
+                && DrawY < wall_pos_reg[3][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[3] | Gw[3] | Bw[3]) != 8'h0) begin
+                        redout = Rw[3];
+                        greenout = Gw[3];
+                        blueout = Bw[3];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[4][0]
+                && DrawX >= wall_pos_reg[4][10:1]
+                && DrawX < wall_pos_reg[4][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[4][20:11]
+                && DrawY < wall_pos_reg[4][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[4] | Gw[4] | Bw[4]) != 8'h0) begin
+                        redout = Rw[4];
+                        greenout = Gw[4];
+                        blueout = Bw[4];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[5][0]
+                && DrawX >= wall_pos_reg[5][10:1]
+                && DrawX < wall_pos_reg[5][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[5][20:11]
+                && DrawY < wall_pos_reg[5][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[5] | Gw[5] | Bw[5]) != 8'h0) begin
+                        redout = Rw[5];
+                        greenout = Gw[5];
+                        blueout = Bw[5];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[6][0]
+                && DrawX >= wall_pos_reg[6][10:1]
+                && DrawX < wall_pos_reg[6][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[6][20:11]
+                && DrawY < wall_pos_reg[6][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[6] | Gw[6] | Bw[6]) != 8'h0) begin
+                        redout = Rw[6];
+                        greenout = Gw[6];
+                        blueout = Bw[6];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[7][0]
+                && DrawX >= wall_pos_reg[7][10:1]
+                && DrawX < wall_pos_reg[7][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[7][20:11]
+                && DrawY < wall_pos_reg[7][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[7] | Gw[7] | Bw[7]) != 8'h0) begin
+                        redout = Rw[7];
+                        greenout = Gw[7];
+                        blueout = Bw[7];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[8][0]
+                && DrawX >= wall_pos_reg[8][10:1]
+                && DrawX < wall_pos_reg[8][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[8][20:11]
+                && DrawY < wall_pos_reg[8][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[8] | Gw[8] | Bw[8]) != 8'h0) begin
+                        redout = Rw[8];
+                        greenout = Gw[8];
+                        blueout = Bw[8];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[9][0]
+                && DrawX >= wall_pos_reg[9][10:1]
+                && DrawX < wall_pos_reg[9][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[9][20:11]
+                && DrawY < wall_pos_reg[9][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[9] | Gw[9] | Bw[9]) != 8'h0) begin
+                        redout = Rw[9];
+                        greenout = Gw[9];
+                        blueout = Bw[9];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[10][0]
+                && DrawX >= wall_pos_reg[10][10:1]
+                && DrawX < wall_pos_reg[10][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[10][20:11]
+                && DrawY < wall_pos_reg[10][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[10] | Gw[10] | Bw[10]) != 8'h0) begin
+                        redout = Rw[10];
+                        greenout = Gw[10];
+                        blueout = Bw[10];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[11][0]
+                && DrawX >= wall_pos_reg[11][10:1]
+                && DrawX < wall_pos_reg[11][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[11][20:11]
+                && DrawY < wall_pos_reg[11][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[11] | Gw[11] | Bw[11]) != 8'h0) begin
+                        redout = Rw[11];
+                        greenout = Gw[11];
+                        blueout = Bw[11];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[12][0]
+                && DrawX >= wall_pos_reg[12][10:1]
+                && DrawX < wall_pos_reg[12][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[12][20:11]
+                && DrawY < wall_pos_reg[12][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[12] | Gw[12] | Bw[12]) != 8'h0) begin
+                        redout = Rw[12];
+                        greenout = Gw[12];
+                        blueout = Bw[12];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[13][0]
+                && DrawX >= wall_pos_reg[13][10:1]
+                && DrawX < wall_pos_reg[13][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[13][20:11]
+                && DrawY < wall_pos_reg[13][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[13] | Gw[13] | Bw[13]) != 8'h0) begin
+                        redout = Rw[13];
+                        greenout = Gw[13];
+                        blueout = Bw[13];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[14][0]
+                && DrawX >= wall_pos_reg[14][10:1]
+                && DrawX < wall_pos_reg[14][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[14][20:11]
+                && DrawY < wall_pos_reg[14][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[14] | Gw[14] | Bw[14]) != 8'h0) begin
+                        redout = Rw[14];
+                        greenout = Gw[14];
+                        blueout = Bw[14];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if(wall_pos_reg[15][0]
+                && DrawX >= wall_pos_reg[15][10:1]
+                && DrawX < wall_pos_reg[15][10:1] + `WALL_WIDTH
+                && DrawY >= wall_pos_reg[15][20:11]
+                && DrawY < wall_pos_reg[15][20:11] + `WALL_HEIGHT
+                ) begin // wall
+                    if((Rw[15] | Gw[15] | Bw[15]) != 8'h0) begin
+                        redout = Rw[15];
+                        greenout = Gw[15];
+                        blueout = Bw[15];
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end 
+                else begin // background : the last layer
                     redout = Rba;
                     greenout = Gba;
                     blueout = Bba;

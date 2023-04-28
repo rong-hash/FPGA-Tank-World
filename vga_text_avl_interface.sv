@@ -195,7 +195,7 @@ color_mapper mapper(.CLK(CLK), .pixel_clk(pixel_clk), .DrawX(DrawX), .DrawY(Draw
 					.base1_direction(base1_direction), .turret1_direction(turret1_direction), 
 					.base2_direction(base2_direction), .turret2_direction(turret2_direction),
 					.bullet_array(bullet_array),
-					.char(char), .font_data(font_data), .palette(palette), .coin_attr_reg(coin_attr_reg),
+					.char(char), .font_data(font_data), .palette(palette), .coin_attr_reg(coin_attr_reg), .wall_pos_reg(wall_pos_reg),
 					.blank(blank), .Red(red), .Green(green), .Blue(blue));
 
 feedback feedback(.frame_clk(vs), .Reset(RESET), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR),

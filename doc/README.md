@@ -134,7 +134,7 @@ end else
 
 ## SCC : Slow Clock Counter
 
-We use SCC to slow down the slock:
+We use SCC to slow down the clock:
 
 * SCC will reset the variable in the second cycle.
 

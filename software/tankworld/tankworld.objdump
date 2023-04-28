@@ -1677,7 +1677,7 @@ void draw_score_panel(void) {
     char color_string[80];
     int y;
     y = SCORE_PANEL_Y;
- 8000a88:	00800284 	movi	r2,10
+ 8000a88:	00800144 	movi	r2,5
  8000a8c:	e0bfe815 	stw	r2,-96(fp)
     if(vga_ctrl->health[0]) {// player left wins,  display "WIN  LOSE" split string into 2 length 20 string, center WIN, LOSE respectively
  8000a90:	d0a00017 	ldw	r2,-32768(gp)
@@ -2064,7 +2064,7 @@ void draw_score_panel(void) {
  8000f90:	e0bfeb17 	ldw	r2,-84(fp)
  8000f94:	10800044 	addi	r2,r2,1
  8000f98:	e0bfeb15 	stw	r2,-84(fp)
- 8000f9c:	00c00804 	movi	r3,32
+ 8000f9c:	00c006c4 	movi	r3,27
  8000fa0:	e0bfe817 	ldw	r2,-96(fp)
  8000fa4:	1885c83a 	sub	r2,r3,r2
  8000fa8:	e0ffeb17 	ldw	r3,-84(fp)
