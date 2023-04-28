@@ -325,3 +325,29 @@ logic [31:0] coin_attr_reg[`COIN_NUM]; // 0 is gold, 1 is silver, 2 is copper : 
 logic [3:0] i, j, k, p;
 ```
 
+The design pattern is to include registers in current modules and use a wire (suffix `out`) to let external module get its signals.
+
+No register should be shared between different modules (impossible in terms of hardware design)
+
+---
+
+### Coin logic explanation
+
+Inside coin we check if each coin is hit by a tank, if it's hit by a tank, then we
+
+* make the coin invalid by clearing the first bit(valid bit) [Note that all the items' registers have a format like `valid | (x<<1) | (y<<11)`]
+
+* increment scores correspondingly
+
+If it's not hit by a tank, then we increment the frame number of the coin. Each coin should increment its frame number ~ 1s.
+
+---
+
+
+### Coin frame
+
+Currently the frame is in `coin_attr_reg[i][23:21]`. 
+
+It's updated with the help of coin counter (associated with `50MHz` FPGA clock) which is a 26 bit regiser.
+
+` logic [25:0] coin_cnt; // 50MHz clock counter for coin make frame advance every second`
