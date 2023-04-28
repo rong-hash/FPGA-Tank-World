@@ -72,7 +72,7 @@
 
 // SCORE PANEL
 #define SCORE_PANEL_X               ((TEXT_SCREEN_X - SCORE_PANEL_WIDTH) >> 1)
-#define SCORE_PANEL_Y               10
+#define SCORE_PANEL_Y               5
 
 #define SCORE_PANEL_HEIGHT          22
 #define SCORE_PANEL_WIDTH           40
