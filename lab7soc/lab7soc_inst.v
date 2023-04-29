@@ -29,6 +29,10 @@
 		.vga_green                      (<connected-to-vga_green>),                      //                        .green
 		.vga_red                        (<connected-to-vga_red>),                        //                        .red
 		.vga_hs                         (<connected-to-vga_hs>),                         //                        .hs
-		.vga_vs                         (<connected-to-vga_vs>)                          //                        .vs
+		.vga_vs                         (<connected-to-vga_vs>),                         //                        .vs
+		.i2c_sda_in                     (<connected-to-i2c_sda_in>),                     //                     i2c.sda_in
+		.i2c_scl_in                     (<connected-to-i2c_scl_in>),                     //                        .scl_in
+		.i2c_sda_oe                     (<connected-to-i2c_sda_oe>),                     //                        .sda_oe
+		.i2c_scl_oe                     (<connected-to-i2c_scl_oe>)                      //                        .scl_oe
 	);
 

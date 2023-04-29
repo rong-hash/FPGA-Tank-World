@@ -30,7 +30,11 @@ module lab7soc (
 	vga_green,
 	vga_red,
 	vga_hs,
-	vga_vs);	
+	vga_vs,
+	i2c_sda_in,
+	i2c_scl_in,
+	i2c_sda_oe,
+	i2c_scl_oe);	
 
 	input	[1:0]	button_wire_export;
 	input		clk_clk;
@@ -63,4 +67,8 @@ module lab7soc (
 	output	[3:0]	vga_red;
 	output		vga_hs;
 	output		vga_vs;
+	input		i2c_sda_in;
+	input		i2c_scl_in;
+	output		i2c_sda_oe;
+	output		i2c_scl_oe;
 endmodule

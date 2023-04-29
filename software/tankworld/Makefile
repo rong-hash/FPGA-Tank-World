@@ -148,6 +148,8 @@ C_SRCS += usb_kb/HID.c
 C_SRCS += usb_kb/MAX3421E.c
 C_SRCS += usb_kb/transfer.c
 C_SRCS += game.c
+C_SRCS += sgtl5000/sgtl5000.c
+C_SRCS += sgtl5000_test.c
 CXX_SRCS :=
 ASM_SRCS :=
 

@@ -39,7 +39,7 @@ module coins(
     logic [9:0] coin_x[`COIN_NUM], coin_y[`COIN_NUM];
     logic [31:0] coin_attr_reg[`COIN_NUM]; // 0 is gold, 1 is silver, 2 is copper : (valid bit, x, y) from LSB to MSB, other bits are reserved
     logic [3:0] i, j, k, p;
-    logic [253:0] coin_cnt; // 50MHz clock counter for coin make frame advance every second
+    logic [25:0] coin_cnt; // 50MHz clock counter for coin make frame advance every second
 
     parameter [9:0] tank_width = 32;
 	parameter [9:0] tank_height = 32;

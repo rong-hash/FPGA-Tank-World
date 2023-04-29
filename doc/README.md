@@ -458,3 +458,42 @@ If you don't have co-pilot then you should use chatgpt / python to do it.
 
 * Add speed and health gear. (Check `coin.sv`, the logic is exactly the same) 
   * We need to make bullet speed and tank speed adjustable.
+
+---
+
+## Sound SGTL 5000 
+
+* Thanks to prof. Cheng's code and ppt guide and lecture.
+
+
+* 2 main problems to think about
+  * How to configure I2C, I2S?
+  * Where is your sampling source?
+
+---
+
+### Notes
+
+* If you create a file under `software` folder(the folder you use as workplace for elipse) it will give you some crazy warnings / bad behaviors. Just drag the file out and drag it to eclipse.
+
+* Check the `sgtl5000_test.c`, remember to comment out the original `main()` first, or do that after you get a compilation error.
+
+--- 
+
+### Top level hardware changes
+
+```sv
+	logic i2c_sda_oe, i2c_scl_oe;
+	logic i2c_serial_scl_in, i2c_serial_sda_in;
+	logic [1:0] aud_mclk_ctr;
+  	assign ARDUINO_IO[3] = aud_mclk_ctr[1];	 //generate 12.5MHz CODEC mclk
+	always_ff @(posedge MAX10_CLK1_50) begin
+		aud_mclk_ctr <= aud_mclk_ctr + 1;
+	end
+	assign ARDUINO_IO[14] = i2c_sda_oe ? 1'b0 : 1'bz;
+	assign i2c_serial_sda_in = ARDUINO_IO[14];
+	assign ARDUINO_IO[15] = i2c_scl_oe ? 1'b0 : 1'bz;
+	assign i2c_serial_scl_in = ARDUINO_IO[15];
+```
+
+This connects Soc to external ports for sound card, and `ARDUINO_IO[3]` is `I2S_MCLK` on DE-10 Schematic, it needs `12.5MHz` clock.

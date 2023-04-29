@@ -24,6 +24,8 @@
 #include "usb_kb/usb_ch9.h"
 #include "usb_kb/USB.h"
 #include "text_mode_vga.h"
+#include "test.h"
+
 
 #define LEDS_PIO_BASE		 	0x40
 #define HEX_DIGITS_PIO_BASE 	0xa0
@@ -220,7 +222,7 @@ long transfer_code(char* keycode){
 }
 
 
-
+#ifndef RUN_TEST
 int main() {
 	BYTE rcode;
 	BOOT_MOUSE_REPORT buf;		//USB mouse report
@@ -345,3 +347,4 @@ int main() {
 	}
 	return 0;
 }
+#endif

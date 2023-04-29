@@ -64,6 +64,9 @@ module lab7 (
 	logic [1:0] hundreds;
 	logic [7:0] keycode;
 	logic [7:0] debug_sig1, debug_sig2;
+	logic i2c_sda_oe, i2c_scl_oe;
+	logic i2c_serial_scl_in, i2c_serial_sda_in;
+	logic [1:0] aud_mclk_ctr;
 //=======================================================
 //  Structural coding
 //=======================================================
@@ -72,6 +75,22 @@ module lab7 (
 	assign ARDUINO_IO[11] = SPI0_MOSI;
 	assign ARDUINO_IO[12] = 1'bZ;
 	assign SPI0_MISO = ARDUINO_IO[12];
+	assign ARDUINO_IO[14] = i2c_sda_oe ? 1'b0 : 1'bz;
+	assign i2c_serial_sda_in = ARDUINO_IO[14];
+	assign ARDUINO_IO[15] = i2c_scl_oe ? 1'b0 : 1'bz;
+	assign i2c_serial_scl_in = ARDUINO_IO[15];
+
+	logic [31:0] l_out, r_out;
+
+	i2s_input i2s_in(.clk(MAX10_CLK1_50), .sclk(ARDUINO_IO[5]), .lrclk(ARDUINO_IO[4]), .data_in(ARDUINO_IO[1]), .l_out(l_out), .r_out(r_out));
+
+	i2s_output i2s_out(.clk(MAX10_CLK1_50), 
+				.sclk(ARDUINO_IO[5]),
+				.lrclk(ARDUINO_IO[4]),
+				.data_l({1'b0, l_out[30:7], 7'b0}), 
+				.data_r({1'b0, r_out[30:7], 7'b0}), 
+				.d_out(ARDUINO_IO[2])); // I2S_in is analog output
+	
 	
 	assign ARDUINO_IO[9] = 1'bZ;
 	assign USB_IRQ = ARDUINO_IO[9];
@@ -100,6 +119,12 @@ module lab7 (
 	
 	HexDriver hex_driver0 (hex_num_0, HEX0[6:0]);
 	assign HEX0[7] = 1'b1;
+	
+	assign ARDUINO_IO[3] = aud_mclk_ctr[1];	 //generate 12.5MHz CODEC mclk
+	always_ff @(posedge MAX10_CLK1_50) begin
+		aud_mclk_ctr <= aud_mclk_ctr + 1;
+	end
+
 
 	
 	
@@ -150,6 +175,12 @@ module lab7 (
 		.vga_vs (VGA_VS),
 		.debug_debug1(debug_sig1),
 		.debug_debug2(debug_sig2),
+		
+		// i2C
+		.i2c_sda_in(i2c_serial_sda_in),
+		.i2c_scl_in(i2c_serial_scl_in),
+		.i2c_sda_oe(i2c_sda_oe),
+		.i2c_scl_oe(i2c_scl_oe)
 		
 	 );
 
