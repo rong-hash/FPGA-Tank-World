@@ -478,7 +478,7 @@ If you don't have co-pilot then you should use chatgpt / python to do it.
 
 * Check the `sgtl5000_test.c`, remember to comment out the original `main()` first, or do that after you get a compilation error.
 
---- 
+---
 
 ### Top level hardware changes
 
@@ -497,3 +497,48 @@ If you don't have co-pilot then you should use chatgpt / python to do it.
 ```
 
 This connects Soc to external ports for sound card, and `ARDUINO_IO[3]` is `I2S_MCLK` on DE-10 Schematic, it needs `12.5MHz` clock.
+
+---
+
+### Clocks
+
+* MCLK   - 50 MHz
+* LRCLK - 44.1 kHz
+* SLCK	 - LRCLK * 64 = 2.8224 M Hz
+
+Note : 
+
+* MCLK is ~ 17 times faster than SLCK still
+* It takes about $C_0 = \frac {\text{MCLK}} {2 \times \text{LRCLK}} \approx 556$ cycles to feed one sample
+  * $C_0$ is the cycles we have to put **one** sample into register
+
+---
+
+### Clock : Old way to play audio
+
+* We need to have a `.sv` interface to SDRAM
+* Then we would have conflict with AVALON MASTER source to SDRAM
+* Then we would have to move program to OCM and use `.sv` module to interface with SDRAM
+* SDRAM is complicated and slow, so we would force it into burst mode by doing consecutive memory opertaion and cache it into OCM.
+* Not eligant ^^
+
+---
+### Clock : Idea & Conclusion
+
+#### Idea : 
+
+* Make a cache, so every cache size we move data to cache in software
+* We have 1 reg which is reset every cache size to check if cache is empty
+* So we break audio into pieces and still use SDRAM - OCM pattern
+
+#### Conclusion : 
+
+* If our cache is 10 K, then it takes about 5.5 M cycles to refresh the cache
+
+---
+
+### Clock : more detail about our implementation
+
+* So we move I2S module to Platform designer.
+
+![image-20230429175508113](waveform1.png)

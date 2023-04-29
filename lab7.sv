@@ -81,15 +81,13 @@ module lab7 (
 	assign i2c_serial_scl_in = ARDUINO_IO[15];
 
 	logic [31:0] l_out, r_out;
-
-	i2s_input i2s_in(.clk(MAX10_CLK1_50), .sclk(ARDUINO_IO[5]), .lrclk(ARDUINO_IO[4]), .data_in(ARDUINO_IO[1]), .l_out(l_out), .r_out(r_out));
-
-	i2s_output i2s_out(.clk(MAX10_CLK1_50), 
-				.sclk(ARDUINO_IO[5]),
-				.lrclk(ARDUINO_IO[4]),
-				.data_l({1'b0, l_out[30:7], 7'b0}), 
-				.data_r({1'b0, r_out[30:7], 7'b0}), 
-				.d_out(ARDUINO_IO[2])); // I2S_in is analog output
+	// ARDUINO_IO[2] is I2S_in ARUDINO_IO[1] is I2S_out
+	// ARDUINO_IO[4] is LRCLK
+	// ARDUINO_IO[5] is SCLK
+	assign ARDUINO_IO[1] = 1'bz;
+	assign ARDUINO_IO[4] = 1'bz;
+	assign ARDUINO_IO[5] = 1'bz;
+	assign ARDUINO_IO[2] = ARUDINO_IO[1];
 	
 	
 	assign ARDUINO_IO[9] = 1'bZ;
