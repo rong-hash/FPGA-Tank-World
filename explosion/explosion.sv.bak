@@ -1,0 +1,12 @@
+module explosion_rom (
+input clk,
+input [14:0] addr,
+output logic [7:0] q
+)
+
+logic [7:0] rom [22050];
+always_ff @(posedge clk) begin
+	q <= rom[addr];
+end
+initial begin $readmemh("explosion.txt", rom); end
+endmodule
