@@ -141,7 +141,7 @@ module color_mapper(
             // @note 4-30-2023 : haor2 : right now, ROMs for coins are changed so that DrawX and DrawY are directly the same 
             // DrawX and DrawY in this module, no need to scale 
             // (coin_attr_reg[j][10:1] - 8, coin_attr_reg[j][20:11] - 8) should be upper left corner of the coin 8 is half of the coin width / height
-            coin_x[j] = (DrawX - (coin_attr_reg[j][10:1] - 8) + coin_attr_reg[j][23:21]* 16); 
+            coin_x[j] = (DrawX - (coin_attr_reg[j][10:1] - 8) + coin_attr_reg[j][23:21]* 32); 
             coin_y[j] = (DrawY - (coin_attr_reg[j][20:11]  - 8));
         end
 
