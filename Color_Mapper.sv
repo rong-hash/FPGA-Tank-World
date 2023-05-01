@@ -138,9 +138,11 @@ module color_mapper(
         background_y = (DrawY & (img_height - 1)) * 15; // mod 32
         // coin_x, coin_y also incorporate the frame number (coin_attr_reg >> 21) which should be within [0, 7]
         for(j = 0; j < `COIN_NUM; j = j + 1) begin
+            // @note 4-30-2023 : haor2 : right now, ROMs for coins are changed so that DrawX and DrawY are directly the same 
+            // DrawX and DrawY in this module, no need to scale 
             // (coin_attr_reg[j][10:1] - 8, coin_attr_reg[j][20:11] - 8) should be upper left corner of the coin 8 is half of the coin width / height
-            coin_x[j] = (DrawX - (coin_attr_reg[j][10:1] - 8) + coin_attr_reg[j][23:21]* 16) * 5; 
-            coin_y[j] = (DrawY - (coin_attr_reg[j][20:11]  - 8)) * 30;
+            coin_x[j] = (DrawX - (coin_attr_reg[j][10:1] - 8) + coin_attr_reg[j][23:21]* 16); 
+            coin_y[j] = (DrawY - (coin_attr_reg[j][20:11]  - 8));
         end
 
         for(k = 0; k < `WALL_NUM ; k = k + 1) begin
