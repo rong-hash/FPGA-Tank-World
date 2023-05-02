@@ -4,9 +4,20 @@
 
 // GAME
 #define SET_GAME_ATTR_START(x)          (x)
+// MAP_NUM: 1: wait to choose 2: U 4: I 8: C 
 #define SET_GAME_ATTR_MAP_NUM(x)        (x<<1)
 #define SET_GAME_ATTR_HEALTH(x)         (x<<5)
+#define SET_GAME_ATTR_SETTING(x)        (x<<10)
 #define MAX_HEALTH_DEFAULT          5
+
+// WALL
+#define GET_WALL_POS(x,y)           (1 | (x<<1) | (y<<11))
+
+// MAP_NUM
+#define UMAP                        1
+#define IMAP                        2
+#define CMAP                        4
+
 
 // TANK
 #define TANK_NUM                    2
@@ -82,6 +93,9 @@
 #define SCORE_PANEL_PADDING_1       6
 #define SCORE_PANEL_PADDING_2       2
 
+
+
+
 static int cursor_pos = MENU_START_ROW_IND; // cursor position, 0 for start, 1 for map, 2 for settings
 
 
@@ -109,10 +123,33 @@ void game_init(void) {
  * with background color bg and foreground color fg. Definition of colors are in text_mode_vga.h.
  * @todo : currently only start will work, map and settings are not implemented.
  */
-void show_menu(void) {
+void show_menu(int choice, int is_map) {
     char color_string[80]; // maximum 80 characters per line, each character is 8x16 pixels
     int i, y;
+    char start_back = PADDING_COLOR;
+    char start_font = FONT_COLOR;
+    char map_back = PADDING_COLOR;
+    char map_font = FONT_COLOR;
+    char setting_back = PADDING_COLOR;
+    char setting_font = FONT_COLOR;
     y = MENU_STARTING_ROW;
+    switch (choice)
+    {
+    case START:
+        start_back = HIGH_LIGHT_PADDING_COLOR;
+        start_font = HIGH_LIGHT_FONT_COLOR;
+        break;
+    case MAP:
+        map_back = HIGH_LIGHT_PADDING_COLOR;
+        map_font = HIGH_LIGHT_FONT_COLOR;
+        break;
+    case SETTING:
+        setting_back = HIGH_LIGHT_PADDING_COLOR;
+        setting_font = HIGH_LIGHT_FONT_COLOR;
+        break;
+    default:
+        break;
+    }
     // draw the upper padding rows
     for(i=0; i<MENU_UPPER_PADDING; i++) {
         sprintf(color_string, "                                        ");
@@ -126,19 +163,31 @@ void show_menu(void) {
         sprintf(color_string, "                                        ");
         textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, PADDING_COLOR, PADDING_COLOR);
     }
-    // draw 3 menu items "START", "MAP", "SETTINGS"
-    sprintf(color_string, "                START                   ");
-    textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, HIGH_LIGHT_PADDING_COLOR, HIGH_LIGHT_FONT_COLOR);
-    sprintf(color_string, "                 MAP                    ");
-    textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, PADDING_COLOR, FONT_COLOR);
-    sprintf(color_string, "              SETTINGS                  ");
-    textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, PADDING_COLOR, FONT_COLOR);
+    if (is_map == 0){
+        // draw 3 menu items "START", "MAP", "SETTINGS"
+        sprintf(color_string, "                START                   ");
+        textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, start_back, start_font);
+        sprintf(color_string, "                 MAP                    ");
+        textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, map_back, map_font);
+        sprintf(color_string, "              SETTINGS                  ");
+        textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, setting_back, setting_font);
+    }
+    else{
+        // draw 3 menu items "U MAP", "I MAP", "C MAP"
+        sprintf(color_string, "                U MAP                   ");
+        textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, start_back, start_font);
+        sprintf(color_string, "                I MAP                   ");
+        textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, map_back, map_font);
+        sprintf(color_string, "                C MAP                   ");
+        textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, setting_back, setting_font);
+    }
     // draw lower padding
     for(i = 0; i < MENU_STARTING_ROW + MENU_HEIGHT - y; i++) {
         sprintf(color_string, "                                        ");
         textVGADrawColorText(color_string, MENU_LEFT_PADDING, y++, PADDING_COLOR, PADDING_COLOR);
     }
 }
+
 
 /**
  * @brief Status bar shows the HEALTH, SCORE, and BULLETS of the tank.
@@ -166,6 +215,90 @@ void draw_status_bars(void) {
     textVGADrawColorText(color_string, TANK_2_STATUS_BAR_X, y++, PADDING_COLOR, FONT_COLOR);
     sprintf(color_string, "BULLETS: %01lu", vga_ctrl->bullet_num[1]);
     textVGADrawColorText(color_string, TANK_2_STATUS_BAR_X, y++, PADDING_COLOR, FONT_COLOR);
+}
+
+void draw_wall(void) {
+    int map_type = (vga_ctrl->game_attr >> 1) & 0xF;
+    int x_leftinitial, y_initial, x_rightinitial, y_bottom, x_bottomleft;
+    int x_middle, y_up;
+    printf("map type: %d\n", map_type);
+    switch (map_type){
+    case 1:
+        x_leftinitial = 240;
+        y_initial = 144;
+        x_rightinitial = 368;
+        y_bottom = 304;
+        x_bottomleft = 272;
+        // draw left vertical line of 'U'
+        for (int i = 0; i < 6; i++){
+            vga_ctrl->wall_pos[i] = GET_WALL_POS(x_leftinitial, y_initial + i * 32);
+        }
+        // draw right vertical line of 'U'
+        for (int i = 0; i < 6; i++){
+            vga_ctrl->wall_pos[i + 6] = GET_WALL_POS(x_rightinitial, y_initial + i * 32);
+        }
+        // draw bottom horizontal line of 'U'
+        for (int i = 0; i < 3; i++){
+            vga_ctrl->wall_pos[i + 12] = GET_WALL_POS(x_bottomleft + i * 32, y_bottom);
+        }
+        break;
+    case 2:
+        x_leftinitial = 272;
+        y_initial = 112;
+        y_bottom = 336;
+        x_middle = 304;
+        y_up = 144;
+        // draw the upper horizontal line
+        for (int i = 0; i < 3; i++){
+            vga_ctrl->wall_pos[i] = GET_WALL_POS(x_leftinitial + i * 32, y_initial);
+        }
+        // draw the lower horizontal line
+        for (int i = 0; i < 3; i++){
+            vga_ctrl->wall_pos[i+3] = GET_WALL_POS(x_leftinitial + i * 32, y_bottom);
+        }
+        // draw the middel vertical line
+        for (int i = 0; i < 6; i++){
+            vga_ctrl->wall_pos[i+6] = GET_WALL_POS(x_middle + i * 32, y_up);
+        }
+        break;
+    case 4:
+        x_middle = 272;
+        y_up = 160;
+        y_bottom = 288;
+        x_leftinitial = 240;
+        // draw the upper horizontal line
+        for (int i = 0; i < 4; i++){
+            vga_ctrl->wall_pos[i] = GET_WALL_POS(x_middle + i * 32, y_up);
+        }
+        // draw the lower horizontal line
+        for (int i = 0; i < 4; i++){
+            vga_ctrl->wall_pos[i+4] = GET_WALL_POS(x_middle + i * 32, y_bottom);
+        }
+        // draw the left vertical line
+        for (int i = 0; i < 5; i++){
+            vga_ctrl->wall_pos[i+8] = GET_WALL_POS(x_leftinitial, y_up + i * 32);
+        }
+        break;
+    default:
+        x_leftinitial = 272;
+        y_initial = 112;
+        y_bottom = 336;
+        x_middle = 304;
+        y_up = 144;
+        // draw the upper horizontal line
+        for (int i = 0; i < 3; i++){
+            vga_ctrl->wall_pos[i] = GET_WALL_POS(x_leftinitial + i * 32, y_initial);
+        }
+        // draw the lower horizontal line
+        for (int i = 0; i < 3; i++){
+            vga_ctrl->wall_pos[i+3] = GET_WALL_POS(x_leftinitial + i * 32, y_bottom);
+        }
+        // draw the middel vertical line
+        for (int i = 0; i < 6; i++){
+            vga_ctrl->wall_pos[i+6] = GET_WALL_POS(x_middle, y_up + i * 32);
+        }
+        break;
+    }
 }
 
 void draw_score_panel(void) {
@@ -222,21 +355,166 @@ void draw_score_panel(void) {
  */
 void menu_control(char* key) {
     int i;
-    for(i = 0; i < 6; i++) {
-        switch (key[i]) {
-        case 40: // enter
-            // set the game bit 1 to start the game
-            // clear the VRAM
-            text_VGA_init();
-            // draw the draw_status_bars
-            draw_status_bars();
+    if (key[0] == last_key)
+        return ;
+    else
+        last_key = key[0];
+    printf("menu state: %d\n", menu_state);
+	printf("game attr: %x\n", vga_ctrl->game_attr);
+    for(i = 0; i < 1; i++) {
+        switch (menu_state){
+        case 0:
+            switch (key[i]) {
+            case 40: // enter
+                // set the game bit 1 to start the game
+                // clear the VRAM
+                text_VGA_init();
+                // draw the draw_status_bars
+                draw_status_bars();
 
-            game_init();
-            vga_ctrl->game_attr |= SET_GAME_ATTR_START(1);
+                // game_init();
+                vga_ctrl->game_attr |= SET_GAME_ATTR_START(1);
+                break;
+            case 81: // down
+                // redraw the menu
+                // show the high light on map
+                // change the game status
+                menu_state = 1;
+                show_menu(MAP, 0);
+                break;
+
+            default:
+                printf("oops, unknown key pressed for menu\n");
+                break;
+            }
             break;
-        
+        // wait to choose map
+        case 1: 
+            switch (key[i]) {
+            case 40: // enter
+                // flip the wait to choose bit
+                show_menu(1, 1);
+                menu_state = 3;
+                break;
+            case 81: // down
+                // redraw the menu
+                // show the high light on setting
+                // change the game status
+                show_menu(SETTING, 0);
+                menu_state = 2;
+                break;
+
+            case 82: // up
+                // redraw the menu
+                // show the high light on start
+                // change the game status
+                show_menu(START, 0);
+                menu_state = 0;
+                break;
+            default:
+                printf("oops, unknown key pressed for menu\n");
+                break;
+            }
+            break;
+
+        case 2:
+            switch (key[i]) {
+            // wait to implement SETTING
+            // case 40: // enter
+            //     // set the game bit 1 to start the game
+            //     // clear the VRAM
+            //     text_VGA_init();
+            //     // draw the draw_status_bars
+            //     draw_status_bars();
+
+            //     game_init();
+            //     vga_ctrl->game_attr |= SET_GAME_ATTR_START(1);
+            //     break;
+            case 82: // up
+                // redraw the menu
+                // show the high light on map
+                // change the game status
+                show_menu(MAP, 0);
+                menu_state = 1;
+                break;
+            default:
+                printf("oops, unknown key pressed for menu\n");
+                break;
+            }
+            break;
+        case 3:
+            switch (key[i]) {
+            case 40: // enter
+                menu_state = 1;
+                // vga_ctrl->game_attr &= 0xFFE1;
+                vga_ctrl->game_attr = vga_ctrl->game_attr | 2;
+                show_menu(MAP, 0);
+                break;
+            case 81: // down
+                // redraw the menu
+                // show the high light on map
+                // change the game status
+                menu_state = 4;
+                show_menu(2, 1);
+                break;
+
+            default:
+                printf("oops, unknown key pressed for menu\n");
+                break;
+            }
+            break;
+        case 4:
+            switch (key[i]) {
+            case 40: // enter
+                menu_state = 1;
+                // vga_ctrl->game_attr &= 0xFFE1;
+                vga_ctrl->game_attr |= 4;
+                show_menu(MAP, 0);
+                break;
+            case 81: // down
+                // redraw the menu
+                // show the high light on map
+                // change the game status
+                menu_state = 5;
+                show_menu(3, 1);
+                break;
+            
+            case 82: // up
+                // redraw the menu
+                // show the high light on map
+                // change the game status
+                menu_state = 3;
+                show_menu(1, 1);
+                break;
+
+            default:
+                printf("oops, unknown key pressed for menu\n");
+                break;
+            }
+            break;
+        case 5:
+            switch (key[i]) {
+            case 40: // enter
+                menu_state = 1;
+                // vga_ctrl->game_attr &= 0xFFE1;
+                vga_ctrl->game_attr |= 8;
+                show_menu(MAP, 0);
+                break;
+            case 82: // up
+                // redraw the menu
+                // show the high light on map
+                // change the game status
+                menu_state = 4;
+                show_menu(2, 1);
+                break;
+
+            default:
+                printf("oops, unknown key pressed for menu\n");
+                break;
+            }
+            break;
         default:
-            printf("oops, unknown key pressed for menu\n");
+            printf("oops, menu state error\n");
             break;
         }
     }

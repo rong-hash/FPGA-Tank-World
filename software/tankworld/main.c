@@ -25,6 +25,7 @@
 #include "usb_kb/USB.h"
 #include "text_mode_vga.h"
 #include "test.h"
+#include "game.h"
 
 
 #define LEDS_PIO_BASE		 	0x40
@@ -222,7 +223,7 @@ long transfer_code(char* keycode){
 }
 
 
-#ifndef RUN_TEST
+// #ifndef RUN_TEST
 int main() {
 	BYTE rcode;
 	BOOT_MOUSE_REPORT buf;		//USB mouse report
@@ -243,8 +244,10 @@ int main() {
 
 	text_VGA_init();
 	game_init();
-	show_menu();
-
+	show_menu(START, 0);
+	// initialize menu state and last key
+	menu_state = 0;
+	last_key = 0;
 
 	while (1) {
 		printf(".");
@@ -279,6 +282,7 @@ int main() {
 					if(vga_ctrl->health[0] == 0 || vga_ctrl->health[1] == 0) {
 						draw_score_panel();
 					} else {
+						draw_wall();
 						draw_status_bars();
 						code = transfer_code((char*)kbdbuf.keycode);
 						ramsetctl(code);
@@ -347,4 +351,4 @@ int main() {
 	}
 	return 0;
 }
-#endif
+// #endif

@@ -20,7 +20,8 @@ module update_base(
 	input logic [7:0] keycode,
 	input logic [9:0] tank_x, tank_y,
 	input logic [2:0] base_direction,
-	output logic [9:0] next_tank_x, next_tank_y,
+	input logic [31:0] wall_pos_reg[16],
+	output logic [9:0] next_tank_x_out, next_tank_y_out,
 	output logic [2:0] next_base_direction
 );
 
@@ -28,7 +29,12 @@ module update_base(
     parameter [9:0] tank_X_Max=639;     // Rightmost point on the X axis
     parameter [9:0] tank_Y_Min=0;       // Topmost point on the Y axis
     parameter [9:0] tank_Y_Max=479;     // Bottommost point on the Y axis
-	
+	logic leftstop;
+	logic rightstop;
+	logic upstop;
+	logic downstop;
+	logic overlap[16];
+	logic [9:0] next_tank_x, next_tank_y;
 	always_comb begin
 		next_tank_x = tank_x;
 		next_tank_y = tank_y;
@@ -39,6 +45,7 @@ module update_base(
 				if (tank_x <= tank_X_Min) begin
 					next_tank_x = tank_X_Min;
 				end
+
 				else begin
 					next_tank_x = tank_x - 1;
 				end
@@ -76,9 +83,33 @@ module update_base(
 			end
 			default: ;
 		endcase
-
 	end
-
+	check_wall cw0(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[0]), .overlap(overlap[0]));
+	check_wall cw1(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[1]), .overlap(overlap[1]));
+	check_wall cw2(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[2]), .overlap(overlap[2]));
+	check_wall cw3(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[3]), .overlap(overlap[3]));
+	check_wall cw4(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[4]), .overlap(overlap[4]));
+	check_wall cw5(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[5]), .overlap(overlap[5]));
+	check_wall cw6(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[6]), .overlap(overlap[6]));
+	check_wall cw7(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[7]), .overlap(overlap[7]));
+	check_wall cw8(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[8]), .overlap(overlap[8]));
+	check_wall cw9(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[9]), .overlap(overlap[9]));
+	check_wall cw10(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[10]), .overlap(overlap[10]));
+	check_wall cw11(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[11]), .overlap(overlap[11]));
+	check_wall cw12(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[12]), .overlap(overlap[12]));
+	check_wall cw13(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[13]), .overlap(overlap[13]));
+	check_wall cw14(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[14]), .overlap(overlap[14]));
+	check_wall cw15(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[15]), .overlap(overlap[15]));
+	always_comb begin
+		if (overlap[0] || overlap[1] || overlap[2] || overlap[3] || overlap[4] || overlap[5] || overlap[6] || overlap[7] || overlap[8] || overlap[9] || overlap[10] || overlap[11] || overlap[12] || overlap[13] || overlap[14] || overlap[15]) begin
+			next_tank_x_out = tank_x;
+			next_tank_y_out = tank_y;
+		end
+		else begin
+			next_tank_x_out = next_tank_x;
+			next_tank_y_out = next_tank_y;
+		end
+	end
 endmodule
 
 
@@ -118,6 +149,7 @@ endmodule
 
 module  ball (input logic [31:0] bullet,
 			input logic [9:0] tank_x[`TANK_NUM], tank_y[`TANK_NUM],
+			input logic [31:0] wall_pos_reg[16],
 			output logic [31:0] next_bullet,
 			output logic hit[`TANK_NUM]
 );
@@ -125,6 +157,8 @@ module  ball (input logic [31:0] bullet,
     logic [9:0] Ball_X_Pos, Ball_X_Motion, Ball_Y_Pos, Ball_Y_Motion, Ball_Size;
 	logic [9:0] next_Ball_X_Pos, next_Ball_X_Motion, next_Ball_Y_Pos, next_Ball_Y_Motion;
 	logic [7:0] dir, next_dir;
+	logic overlap[16];
+	logic is_overlap;
     parameter [9:0] Ball_X_Center=320;  // Center position on the X axis
     parameter [9:0] Ball_Y_Center=240;  // Center position on the Y axis
     parameter [9:0] Ball_X_Min=0;       // Leftmost point on the X axis
@@ -243,16 +277,63 @@ module  ball (input logic [31:0] bullet,
 		end
 
     end
+	ball_check_wall bcw0(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[0]), .overlap(overlap[0]));
+	ball_check_wall bcw1(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[1]), .overlap(overlap[1]));
+	ball_check_wall bcw2(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[2]), .overlap(overlap[2]));
+	ball_check_wall bcw3(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[3]), .overlap(overlap[3]));
+	ball_check_wall bcw4(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[4]), .overlap(overlap[4]));
+	ball_check_wall bcw5(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[5]), .overlap(overlap[5]));
+	ball_check_wall bcw6(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[6]), .overlap(overlap[6]));
+	ball_check_wall bcw7(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[7]), .overlap(overlap[7]));
+	ball_check_wall bcw8(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[8]), .overlap(overlap[8]));
+	ball_check_wall bcw9(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[9]), .overlap(overlap[9]));
+	ball_check_wall bcw10(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[10]), .overlap(overlap[10]));
+	ball_check_wall bcw11(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[11]), .overlap(overlap[11]));
+	ball_check_wall bcw12(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[12]), .overlap(overlap[12]));
+	ball_check_wall bcw13(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[13]), .overlap(overlap[13]));
+	ball_check_wall bcw14(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[14]), .overlap(overlap[14]));
+	ball_check_wall bcw15(.x(next_Ball_X_Pos), .y(next_Ball_Y_Pos), .wall_pos_reg(wall_pos_reg[15]), .overlap(overlap[15]));
+	assign is_overlap = overlap[0] || overlap[1] || overlap[2] || overlap[3] || overlap[4] || overlap[5] || overlap[6] || overlap[7] || overlap[8] || overlap[9] || overlap[10] || overlap[11] || overlap[12] || overlap[13] || overlap[14] || overlap[15];
+
 	// if bullet existed and doesn't hit any tanks, update bullet position, otherwise set it to 0
-	assign next_bullet = ((bullet & 1) && !hit[0] && !hit[1])  ? ((bullet & 1) | (next_dir << 1) | (next_Ball_X_Pos << 9) | (next_Ball_Y_Pos << 19)) : 0;
+	assign next_bullet = (((bullet & 1) && !hit[0] && !hit[1]) && (is_overlap == 1'b0)) ? ((bullet & 1) | (next_dir << 1) | (next_Ball_X_Pos << 9) | (next_Ball_Y_Pos << 19)) : 0;
 
 endmodule
 
+module check_wall(
+	input logic [9:0] x, // tank_x or ball_x
+	input logic [9:0] y, // tank_y or ball_y
+	input logic [31:0] wall_pos_reg,
+	output logic overlap
+);
+	logic [31:0] wall_x, wall_y;
+	assign wall_x = wall_pos_reg[10:1];
+	assign wall_y = wall_pos_reg[20:11];
+	// check if the rectangle with upper left corner (x, y) and the wall rectangle 
+	// with upper left corner (wall_x, wall_y) overlap
+	assign overlap = (x < (wall_x + 32)) && ((x + 32) > wall_x) && (y < (wall_y + 32)) && ((y + 32) > wall_y);
 
+endmodule
+
+module ball_check_wall(
+	input logic [9:0] x, // tank_x
+	input logic [9:0] y, // tank_y
+	input logic [31:0] wall_pos_reg,
+	output logic overlap
+);
+	// x, y is the center coordinate of the ball
+	logic ball_size = 4;
+	logic [31:0] wall_x, wall_y;
+	assign wall_x = wall_pos_reg[10:1];
+	assign wall_y = wall_pos_reg[20:11];
+	// check if the ball with center (x, y) and the wall rectangle with upper left corner (wall_x, wall_y) overlap
+	assign overlap = (x >= wall_x - ball_size) && (x <= (wall_x + 32 + ball_size)) && (y >= wall_y - ball_size) && (y <= (wall_y + 32 + ball_size));
+endmodule
 
 module tank_position_direction(
 	input logic[31:0] keycode,
 	input logic Reset, frame_clk,
+	input logic [31:0] wall_pos_reg[16],
 	output logic [9:0] tank_x1out, tank_y1out, tank_x2out, tank_y2out, 
 	output logic[2:0] base1_directionout, turret1_directionout, base2_directionout, turret2_directionout,
 	output logic [31:0] bullet_array[2][8],
@@ -421,47 +502,47 @@ module tank_position_direction(
 	// Below are always_comb blocks : they are used to calculate the next state of the tank position and direction
 	
 	// tank base
-	update_base base1(.keycode(tank1_base), .tank_x(tank_x[0]), .tank_y(tank_y[0]), .base_direction(base_direction[0]), 
-					.next_tank_x(next_tank_x[0]), .next_tank_y(next_tank_y[0]), .next_base_direction(next_base_direction[0]));
-	update_base base2(.keycode(tank2_base), .tank_x(tank_x[1]), .tank_y(tank_y[1]), .base_direction(base_direction[1]), 
-					.next_tank_x(next_tank_x[1]), .next_tank_y(next_tank_y[1]), .next_base_direction(next_base_direction[1]));
+	update_base base1(.keycode(tank1_base), .tank_x(tank_x[0]), .tank_y(tank_y[0]), .base_direction(base_direction[0]),  .wall_pos_reg(wall_pos_reg),
+					.next_tank_x_out(next_tank_x[0]), .next_tank_y_out(next_tank_y[0]), .next_base_direction(next_base_direction[0]));
+	update_base base2(.keycode(tank2_base), .tank_x(tank_x[1]), .tank_y(tank_y[1]), .base_direction(base_direction[1]),  .wall_pos_reg(wall_pos_reg),
+					.next_tank_x_out(next_tank_x[1]), .next_tank_y_out(next_tank_y[1]), .next_base_direction(next_base_direction[1]));
 	// tank turrent
 	update_turret turret1(.keycode(tank1_turret), .turret_direction(turret_direction[0]), .fire(fire[0]), .fire_scc(fire_scc[0]), 
 	.next_turret_direction(next_turret_direction[0]), .next_fire(next_fire[0]), .next_fire_scc(next_fire_scc[0]));
 	update_turret turret2(.keycode(tank2_turret), .turret_direction(turret_direction[1]), .fire(fire[1]), .fire_scc(fire_scc[1]),
 	.next_turret_direction(next_turret_direction[1]), .next_fire(next_fire[1]), .next_fire_scc(next_fire_scc[1]));
 	// tank bullet : allow each tank to have up to 8 bullets on the screen at once 
-	ball ball01(.bullet(bullet_array[0][0]), .next_bullet(next_bullet_array[0][0]), 
+	ball ball01(.bullet(bullet_array[0][0]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[0][0]), 
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[0]));
-	ball ball02(.bullet(bullet_array[0][1]), .next_bullet(next_bullet_array[0][1]),
+	ball ball02(.bullet(bullet_array[0][1]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[0][1]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[1]));
-	ball ball03(.bullet(bullet_array[0][2]), .next_bullet(next_bullet_array[0][2]),
+	ball ball03(.bullet(bullet_array[0][2]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[0][2]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[2]));
-	ball ball04(.bullet(bullet_array[0][3]), .next_bullet(next_bullet_array[0][3]),
+	ball ball04(.bullet(bullet_array[0][3]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[0][3]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[3]));
-	ball ball05(.bullet(bullet_array[0][4]), .next_bullet(next_bullet_array[0][4]),
+	ball ball05(.bullet(bullet_array[0][4]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[0][4]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[4]));
-	ball ball06(.bullet(bullet_array[0][5]), .next_bullet(next_bullet_array[0][5]),
+	ball ball06(.bullet(bullet_array[0][5]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[0][5]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[5]));
-	ball ball07(.bullet(bullet_array[0][6]), .next_bullet(next_bullet_array[0][6]),
+	ball ball07(.bullet(bullet_array[0][6]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[0][6]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[6]));
-	ball ball08(.bullet(bullet_array[0][7]), .next_bullet(next_bullet_array[0][7]),
+	ball ball08(.bullet(bullet_array[0][7]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[0][7]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[7]));
-	ball ball11(.bullet(bullet_array[1][0]), .next_bullet(next_bullet_array[1][0]),
+	ball ball11(.bullet(bullet_array[1][0]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[1][0]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[8]));
-	ball ball12(.bullet(bullet_array[1][1]), .next_bullet(next_bullet_array[1][1]),
+	ball ball12(.bullet(bullet_array[1][1]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[1][1]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[9]));
-	ball ball13(.bullet(bullet_array[1][2]), .next_bullet(next_bullet_array[1][2]),
+	ball ball13(.bullet(bullet_array[1][2]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[1][2]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[10]));
-	ball ball14(.bullet(bullet_array[1][3]), .next_bullet(next_bullet_array[1][3]),
+	ball ball14(.bullet(bullet_array[1][3]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[1][3]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[11]));
-	ball ball15(.bullet(bullet_array[1][4]), .next_bullet(next_bullet_array[1][4]),
+	ball ball15(.bullet(bullet_array[1][4]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[1][4]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[12]));
-	ball ball16(.bullet(bullet_array[1][5]), .next_bullet(next_bullet_array[1][5]),
+	ball ball16(.bullet(bullet_array[1][5]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[1][5]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[13]));
-	ball ball17(.bullet(bullet_array[1][6]), .next_bullet(next_bullet_array[1][6]),
+	ball ball17(.bullet(bullet_array[1][6]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[1][6]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[14]));
-	ball ball18(.bullet(bullet_array[1][7]), .next_bullet(next_bullet_array[1][7]),
+	ball ball18(.bullet(bullet_array[1][7]), .wall_pos_reg(wall_pos_reg), .next_bullet(next_bullet_array[1][7]),
 	.tank_x(tank_x), .tank_y(tank_y), .hit(hit[15]));
 
     assign tank_x1out = tank_x[0];

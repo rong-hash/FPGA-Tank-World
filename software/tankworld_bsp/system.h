@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'lab7soc'
  * SOPC Builder design path: ../../lab7soc.sopcinfo
  *
- * Generated: Thu Apr 27 22:56:24 CDT 2023
+ * Generated: Tue May 02 10:44:12 CDT 2023
  */
 
 /*
@@ -133,6 +133,7 @@
  *
  */
 
+#define __ALTERA_AVALON_I2C
 #define __ALTERA_AVALON_JTAG_UART
 #define __ALTERA_AVALON_NEW_SDRAM_CONTROLLER
 #define __ALTERA_AVALON_ONCHIP_MEMORY2
@@ -258,6 +259,23 @@
 #define HEX_RESET_VALUE 0
 #define HEX_SPAN 16
 #define HEX_TYPE "altera_avalon_pio"
+
+
+/*
+ * i2c_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_i2c_0 altera_avalon_i2c
+#define I2C_0_BASE 0x140
+#define I2C_0_FIFO_DEPTH 4
+#define I2C_0_FREQ 50000000
+#define I2C_0_IRQ 4
+#define I2C_0_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define I2C_0_NAME "/dev/i2c_0"
+#define I2C_0_SPAN 64
+#define I2C_0_TYPE "altera_avalon_i2c"
+#define I2C_0_USE_AV_ST 0
 
 
 /*
@@ -484,7 +502,7 @@
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1682653541
+#define SYSID_QSYS_0_TIMESTAMP 1683041044
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 
