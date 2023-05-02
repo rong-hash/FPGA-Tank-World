@@ -134,7 +134,7 @@ always_ff @(posedge CLK ) begin
 		else if(AVL_ADDR <= `CTRL_REG_END)
 			control_reg <= AVL_WRITEDATA;
 		else if(AVL_ADDR <= `GAME_ATTR_REG_END)
-			game_attr_reg[AVL_ADDR - `CTRL_REG_END - 1] <= AVL_WRITEDATA;
+			game_attr_reg <= AVL_WRITEDATA;
 		else if(AVL_ADDR > `COIN_ATTR_REG_END) begin 
 			if(AVL_ADDR > `SCORE_ATTR_REG_END) begin
 				if(AVL_ADDR <= `INIT_POS_REG_END)
@@ -149,7 +149,7 @@ always_ff @(posedge CLK ) begin
 		else if(AVL_ADDR <= `CTRL_REG_END)
 			RD_DATA2 <= control_reg;
 		else if(AVL_ADDR <= `GAME_ATTR_REG_END)
-			RD_DATA2 <= game_attr_reg[AVL_ADDR - `CTRL_REG_END - 1];
+			RD_DATA2 <= game_attr_reg;
 		else if(AVL_ADDR <= `COIN_ATTR_REG_END)
 			RD_DATA2 <= coin_attr_reg[AVL_ADDR - `GAME_ATTR_REG_END - 1];
 		else if(AVL_ADDR <= `HEALTH_ATTR_REG_END)
@@ -184,7 +184,7 @@ my_text my_text(.DrawX(DrawX), .DrawY(DrawY),  .char_data(char_data), .index(ind
 assign font_addr = {char[14:8], DrawY[3:0]};
 
 // below are motion engines (input keycode, output tank position and direction)
-tank_position_direction my_tank(.keycode(control_reg), .Reset(RESET), .frame_clk(vs), 
+tank_position_direction my_tank(.keycode(control_reg), .Reset(RESET), .frame_clk(vs), .wall_pos_reg(wall_pos_reg),
 			.tank_x1out(tank_x[0]), .tank_y1out(tank_y[0]), .tank_x2out(tank_x[1]), .tank_y2out(tank_y[1]),
 			.base1_directionout(base1_direction), .turret1_directionout(turret1_direction), 
 			.base2_directionout(base2_direction), .turret2_directionout(turret2_direction),
@@ -213,9 +213,11 @@ coins coins(.Reset(RESET), .CLK(CLK), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR)
 // assign debug1 = {bullet_array[0][7][8:1]};
 // assign debug2 = {bullet_array[1][7][8:1]};
 
-assign debug1 = coin_attr_reg[0][7:0]; // 1 | (x<<1)
-assign debug2 = coin_attr_reg[0][18:11]; // y
+// assign debug1 = coin_attr_reg[0][7:0]; // 1 | (x<<1)
+// assign debug2 = coin_attr_reg[0][18:11]; // y
 
+assign debug1 = game_attr_reg[7:0];
+assign debug2 = game_attr_reg[15:8];
 
 endmodule
 

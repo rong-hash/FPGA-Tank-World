@@ -141,8 +141,8 @@ module color_mapper(
             // @note 4-30-2023 : haor2 : right now, ROMs for coins are changed so that DrawX and DrawY are directly the same 
             // DrawX and DrawY in this module, no need to scale 
             // (coin_attr_reg[j][10:1] - 8, coin_attr_reg[j][20:11] - 8) should be upper left corner of the coin 8 is half of the coin width / height
-            coin_x[j] = (DrawX - (coin_attr_reg[j][10:1] - 8) + coin_attr_reg[j][23:21]* 32); 
-            coin_y[j] = (DrawY - (coin_attr_reg[j][20:11]  - 8));
+            coin_x[j] = (DrawX - (coin_attr_reg[j][10:1] - 16) + coin_attr_reg[j][23:21]* 32); 
+            coin_y[j] = (DrawY - (coin_attr_reg[j][20:11]  - 16));
         end
 
         for(k = 0; k < `WALL_NUM ; k = k + 1) begin
@@ -259,10 +259,10 @@ module color_mapper(
                 end 
                 else if( (coin_attr_reg[0] & 1) // if gold coin exist
                     // and within drawing point is inside the coin (centered at (x,y))
-                    && DrawX >= coin_attr_reg[0][10:1] - 8
-                    && DrawX < coin_attr_reg[0][10:1] + 8
-                    && DrawY >= coin_attr_reg[0][20:11]  - 8
-                    && DrawY < coin_attr_reg[0][20:11] + 8
+                    && DrawX >= coin_attr_reg[0][10:1] - 16
+                    && DrawX < coin_attr_reg[0][10:1] + 16
+                    && DrawY >= coin_attr_reg[0][20:11]  - 16
+                    && DrawY < coin_attr_reg[0][20:11] + 16
                  ) begin // gold coin
                     if((Rcg | Gcg | Bcg) != 8'h0) begin
                         redout = Rcg;
@@ -275,10 +275,10 @@ module color_mapper(
                         blueout = Bba;
                     end
                  end else if( (coin_attr_reg[1] & 1)
-                 && DrawX >= coin_attr_reg[1][10:1] - 8
-                && DrawX < coin_attr_reg[1][10:1] + 8
-                && DrawY >= coin_attr_reg[1][20:11]  - 8
-                && DrawY < coin_attr_reg[1][20:11] + 8
+                 && DrawX >= coin_attr_reg[1][10:1] - 16
+                && DrawX < coin_attr_reg[1][10:1] + 16
+                && DrawY >= coin_attr_reg[1][20:11]  - 16
+                && DrawY < coin_attr_reg[1][20:11] + 16
                 ) begin // silver coin
                     if((Rcs | Gcs | Bcs) != 8'h0) begin
                         redout = Rcs;
@@ -290,10 +290,10 @@ module color_mapper(
                         blueout = Bba;
                     end
                 end else if( (coin_attr_reg[2] & 1) 
-                && DrawX >= coin_attr_reg[2][10:1] - 8
-                && DrawX < coin_attr_reg[2][10:1] + 8
-                && DrawY >= coin_attr_reg[2][20:11]  - 8
-                && DrawY < coin_attr_reg[2][20:11] + 8
+                && DrawX >= coin_attr_reg[2][10:1] - 16
+                && DrawX < coin_attr_reg[2][10:1] + 16
+                && DrawY >= coin_attr_reg[2][20:11]  - 16
+                && DrawY < coin_attr_reg[2][20:11] + 16
                 ) begin // copper coin
                     if((Rcc | Gcc | Bcc) != 8'h0) begin
                         redout = Rcc;
