@@ -35,6 +35,8 @@ FGD_R/G/B = Foreground color, flipped with background when Inv bit is set
 `define WALL_POS_REG_END 				2082
 `define BULLET_NUM_REG_END 				2084
 `define TANK_POS_REG_END 				2086
+`define CURE_REG_END                    2087
+`define SPEED_REG_END				    2088
 
 `define COIN_NUM 						3
 `define TANK_NUM 						2
@@ -91,9 +93,17 @@ logic [31:0] health_attr_reg[`TANK_NUM];
 logic [31:0] score_attr_reg[`TANK_NUM];
 logic [31:0] init_pos_reg[`TANK_NUM];
 logic [31:0] wall_pos_reg[`WALL_NUM];
+logic [31:0] cure_reg;
+logic [31:0] speed_reg;
+
 // Hardware Driven Signals : Signals mainly sent by hardware to software
 logic [31:0] bullet_num_reg[`TANK_NUM];
 logic [31:0] tank_pos_reg[`TANK_NUM];
+
+//props
+
+logic cured, to_cure[`TANK_NUM];
+logic speed_up, to_speed[`TANK_NUM];
 
 
 // logic fire[2];
@@ -164,6 +174,10 @@ always_ff @(posedge CLK ) begin
 			RD_DATA2 <= bullet_num_reg[AVL_ADDR - `WALL_POS_REG_END - 1];
 		else if(AVL_ADDR <= `TANK_POS_REG_END)
 			RD_DATA2 <= tank_pos_reg[AVL_ADDR - `BULLET_NUM_REG_END - 1];
+		else if(AVL_ADDR <= `CURE_REG_END) 
+			RD_DATA2 <= cure_reg;
+		else if(AVL_ADDR <= `SPEED_REG_END)
+			RD_DATA2 <= speed_reg;
 	end
 end
 
@@ -188,6 +202,7 @@ tank_position_direction my_tank(.keycode(control_reg), .Reset(RESET), .frame_clk
 			.tank_x1out(tank_x[0]), .tank_y1out(tank_y[0]), .tank_x2out(tank_x[1]), .tank_y2out(tank_y[1]),
 			.base1_directionout(base1_direction), .turret1_directionout(turret1_direction), 
 			.base2_directionout(base2_direction), .turret2_directionout(turret2_direction),
+			.speed_up(speed_up), .to_speed(to_speed),
 			.bullet_array(bullet_array), .hole_ind(hole_ind), .hit(hit));
 
 color_mapper mapper(.CLK(CLK), .pixel_clk(pixel_clk), .DrawX(DrawX), .DrawY(DrawY), 
@@ -196,17 +211,26 @@ color_mapper mapper(.CLK(CLK), .pixel_clk(pixel_clk), .DrawX(DrawX), .DrawY(Draw
 					.base2_direction(base2_direction), .turret2_direction(turret2_direction),
 					.bullet_array(bullet_array),
 					.char(char), .font_data(font_data), .palette(palette), .coin_attr_reg(coin_attr_reg), .wall_pos_reg(wall_pos_reg),
+					.cure_reg(cure_reg), .speed_reg(speed_reg),
 					.blank(blank), .Red(red), .Green(green), .Blue(blue));
 
 feedback feedback(.frame_clk(vs), .Reset(RESET), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR),
 					.AVL_WRITEDATA(AVL_WRITEDATA), .bullet_array(bullet_array), .tank_x(tank_x), 
 					.tank_y(tank_y), .hit(hit), .bullet_num_reg(bullet_num_reg), 
+					.to_cure(to_cure), .cured(cured), 
 					.tank_pos_reg(tank_pos_reg), .health_attr_reg_out(health_attr_reg));
 
 coins coins(.Reset(RESET), .CLK(CLK), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR), 
 			.AVL_WRITEDATA(AVL_WRITEDATA), .tank_x(tank_x), .tank_y(tank_y), 
 			.score_attr_reg(score_attr_reg), .coin_attr_reg_out(coin_attr_reg));
 
+health_gear health_gear(.Reset(RESET), .CLK(CLK), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR), 
+			.AVL_WRITEDATA(AVL_WRITEDATA), .tank_x(tank_x), .tank_y(tank_y), .cure_reg_out(cure_reg),
+			.cured(cured), .to_cure(to_cure));
+
+speed_gear speed_gear(.Reset(RESET), .CLK(CLK), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR), 
+			.AVL_WRITEDATA(AVL_WRITEDATA), .tank_x(tank_x), .tank_y(tank_y), .speed_reg_out(speed_reg),
+			.speed_up(speed_up), .to_speed(to_speed));
 
 // assign debug1 = {bullet_array[0][0][0], bullet_array[0][1][0], bullet_array[0][2][0], bullet_array[0][3][0], bullet_array[0][4][0], bullet_array[0][5][0], bullet_array[0][6][0], bullet_array[0][7][0]};
 // assign debug2 = {bullet_array[1][0][0], bullet_array[1][1][0], bullet_array[1][2][0], bullet_array[1][3][0], bullet_array[1][4][0], bullet_array[1][5][0], bullet_array[1][6][0], bullet_array[1][7][0]};
@@ -216,8 +240,8 @@ coins coins(.Reset(RESET), .CLK(CLK), .AVL_WRITE(AVL_WRITE), .AVL_ADDR(AVL_ADDR)
 // assign debug1 = coin_attr_reg[0][7:0]; // 1 | (x<<1)
 // assign debug2 = coin_attr_reg[0][18:11]; // y
 
-assign debug1 = game_attr_reg[7:0];
-assign debug2 = game_attr_reg[15:8];
+assign debug1 = cured;
+assign debug2 = speed_up;
 
 endmodule
 

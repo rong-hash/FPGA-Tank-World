@@ -160,14 +160,6 @@
 					"strict" : false
 				},
 				{
-					"name" : "HEX4[1]",
-					"strict" : false
-				},
-				{
-					"name" : "HEX4[2]",
-					"strict" : false
-				},
-				{
 					"name" : "HEX4[3]",
 					"strict" : false
 				},
@@ -180,19 +172,7 @@
 					"strict" : false
 				},
 				{
-					"name" : "HEX4[6]",
-					"strict" : false
-				},
-				{
 					"name" : "HEX5[0]",
-					"strict" : false
-				},
-				{
-					"name" : "HEX5[1]",
-					"strict" : false
-				},
-				{
-					"name" : "HEX5[2]",
 					"strict" : false
 				},
 				{
@@ -205,10 +185,6 @@
 				},
 				{
 					"name" : "HEX5[5]",
-					"strict" : false
-				},
-				{
-					"name" : "HEX5[6]",
 					"strict" : false
 				},
 				{

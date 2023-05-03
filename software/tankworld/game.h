@@ -16,6 +16,7 @@
 static volatile int menu_state;
 static volatile char last_key;
 
+void check_gears(void);
 void game_init(void);
 
 void show_menu(int choice, int is_map);

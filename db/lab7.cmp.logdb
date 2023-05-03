@@ -31,7 +31,7 @@ DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,lab7soc:u0|vga_text_avl_interface:vga_te
 DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,lab7soc:u0|vga_text_avl_interface:vga_text_mode_controller_0|color_mapper:mapper|lpm_mult:Mult3|mult_fgs:auto_generated|mac_out2,
 DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,lab7soc:u0|vga_text_avl_interface:vga_text_mode_controller_0|color_mapper:mapper|lpm_mult:Mult4|mult_fgs:auto_generated|mac_out2,
 DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,lab7soc:u0|vga_text_avl_interface:vga_text_mode_controller_0|color_mapper:mapper|lpm_mult:Mult5|mult_fgs:auto_generated|mac_out2,
-PORT_SWAPPING,PORT_SWAPPING_FINISHED,lab7soc:u0|vga_text_avl_interface:vga_text_mode_controller_0|color_mapper:mapper|lpm_mult:Mult30|mult_fgs:auto_generated|mac_mult1,
+PORT_SWAPPING,PORT_SWAPPING_FINISHED,lab7soc:u0|vga_text_avl_interface:vga_text_mode_controller_0|color_mapper:mapper|lpm_mult:Mult28|mult_fgs:auto_generated|mac_mult1,
 IO_RULES,NUM_PINS_NOT_EXCEED_LOC_AVAILABLE,PASS,IO_000001,Capacity Checks,Number of pins in an I/O bank should not exceed the number of locations available.,Critical,0 such failures found.,,I/O,,
 IO_RULES,NUM_CLKS_NOT_EXCEED_CLKS_AVAILABLE,PASS,IO_000002,Capacity Checks,Number of clocks in an I/O bank should not exceed the number of clocks available.,Critical,0 such failures found.,,I/O,,
 IO_RULES,NUM_VREF_NOT_EXCEED_LOC_AVAILABLE,PASS,IO_000003,Capacity Checks,Number of pins in a Vrefgroup should not exceed the number of locations available.,Critical,0 such failures found.,,I/O,,

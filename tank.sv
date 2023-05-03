@@ -15,12 +15,14 @@
 `define TANK_WIDTH 			32
 `define TANK_HEIGHT 		32
 `define TANK_NUM 			2
+`define DEFAULT_SPEED 		1
 
 module update_base(
 	input logic [7:0] keycode,
 	input logic [9:0] tank_x, tank_y,
 	input logic [2:0] base_direction,
 	input logic [31:0] wall_pos_reg[16],
+	input logic [9:0] speed,
 	output logic [9:0] next_tank_x_out, next_tank_y_out,
 	output logic [2:0] next_base_direction
 );
@@ -47,7 +49,7 @@ module update_base(
 				end
 
 				else begin
-					next_tank_x = tank_x - 1;
+					next_tank_x = tank_x - speed;
 				end
 				next_base_direction = 3'h2;
 			end
@@ -57,7 +59,7 @@ module update_base(
 					next_tank_y = tank_Y_Max - 32;
 				end
 				else begin
-					next_tank_y = tank_y + 1;
+					next_tank_y = tank_y + speed;
 				end
 				next_base_direction = 3'h4;
 			end
@@ -67,7 +69,7 @@ module update_base(
 					next_tank_y = tank_Y_Min;
 				end
 				else begin
-					next_tank_y = tank_y - 1;
+					next_tank_y = tank_y - speed;
 				end
 				next_base_direction = 3'h0;
 			end
@@ -77,7 +79,7 @@ module update_base(
 					next_tank_x = tank_X_Max - 32;
 				end
 				else begin
-					next_tank_x = tank_x + 1;
+					next_tank_x = tank_x + speed;
 				end
 				next_base_direction = 3'h6;
 			end
@@ -334,11 +336,13 @@ module tank_position_direction(
 	input logic[31:0] keycode,
 	input logic Reset, frame_clk,
 	input logic [31:0] wall_pos_reg[16],
+	input logic to_speed[`TANK_NUM],
 	output logic [9:0] tank_x1out, tank_y1out, tank_x2out, tank_y2out, 
 	output logic[2:0] base1_directionout, turret1_directionout, base2_directionout, turret2_directionout,
 	output logic [31:0] bullet_array[2][8],
 	output logic [7:0] hole_ind[2],
-	output logic hit[tank_num * ARRAY_SIZE][tank_num] // hit[i][j] = 1 means bullet i hit tank j
+	output logic hit[tank_num * ARRAY_SIZE][tank_num], // hit[i][j] = 1 means bullet i hit tank j
+	output logic speed_up
 	// output logic fire[2]
 );
 	
@@ -392,6 +396,8 @@ module tank_position_direction(
 
 	// attribute registers for tank
 	logic [9:0] alive_bullet_cnt[tank_num][ARRAY_SIZE]; // not 0 means alive, incremented by 1 every frame
+
+	logic [9:0] speed[`TANK_NUM];
 	
 	assign tank2_turret = keycode[7:0];
 	assign tank2_base = keycode[15:8];
@@ -419,6 +425,8 @@ module tank_position_direction(
 			fire[1] <= 0;
 			fire_scc[0] <= 0;
 			fire_scc[1] <= 0;
+			speed[0] <= `DEFAULT_SPEED;
+			speed[1] <= `DEFAULT_SPEED;
 			for(i = 0; i < tank_num; i++) begin
 				for(idx[i] = 0; idx[i] < ARRAY_SIZE; idx[i]++) begin
 					bullet_array[i][idx[i]] <= 0;
@@ -436,11 +444,9 @@ module tank_position_direction(
 				if(1 == (fire_scc[i] & (fire_scc_num - 1)) ) fire[i] <= 0; // reset in the first frame
 				else fire[i] <= next_fire[i];
 
-
-
 				fire_scc[i] <= next_fire_scc[i];
 				
-				
+				if(to_speed[i]) speed[i] <= speed[i] << 1;
 
 				if(fire[i] && !(fire_scc[i] & (fire_scc_num - 1)) ) begin
 					// check for hole in bullet array, at ARRAY_SIZE, it's a dummy node meaning it must be a hole
@@ -496,15 +502,17 @@ module tank_position_direction(
 						alive_bullet_cnt[i][hole_ind[i]] <= 1;
 					end
 			end
+			if(!speed_up && (to_speed[0] || to_speed[1])) speed_up <= 1;
+			else speed_up <= 0;
 		end
 	end
 	
 	// Below are always_comb blocks : they are used to calculate the next state of the tank position and direction
 	
 	// tank base
-	update_base base1(.keycode(tank1_base), .tank_x(tank_x[0]), .tank_y(tank_y[0]), .base_direction(base_direction[0]),  .wall_pos_reg(wall_pos_reg),
+	update_base base1(.keycode(tank1_base), .tank_x(tank_x[0]), .tank_y(tank_y[0]), .base_direction(base_direction[0]),  .wall_pos_reg(wall_pos_reg), .speed(speed[0]),
 					.next_tank_x_out(next_tank_x[0]), .next_tank_y_out(next_tank_y[0]), .next_base_direction(next_base_direction[0]));
-	update_base base2(.keycode(tank2_base), .tank_x(tank_x[1]), .tank_y(tank_y[1]), .base_direction(base_direction[1]),  .wall_pos_reg(wall_pos_reg),
+	update_base base2(.keycode(tank2_base), .tank_x(tank_x[1]), .tank_y(tank_y[1]), .base_direction(base_direction[1]),  .wall_pos_reg(wall_pos_reg), .speed(speed[1]),
 					.next_tank_x_out(next_tank_x[1]), .next_tank_y_out(next_tank_y[1]), .next_base_direction(next_base_direction[1]));
 	// tank turrent
 	update_turret turret1(.keycode(tank1_turret), .turret_direction(turret_direction[0]), .fire(fire[0]), .fire_scc(fire_scc[0]), 

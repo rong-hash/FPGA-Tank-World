@@ -27,6 +27,7 @@ module color_mapper(
     input logic [31:0] palette[`NUM_PALETTE],
     input logic [31:0] coin_attr_reg[`COIN_NUM],
     input logic [31:0] wall_pos_reg[`WALL_NUM],
+    input logic [31:0] cure_reg, speed_reg,
     output logic [7:0] Red, Green, Blue
 );
 
@@ -38,6 +39,7 @@ module color_mapper(
     parameter [31:0] Ball_Size = 4;
 
     logic [9:0] base_x, base_y, background_x, background_y, coin_x[`COIN_NUM], coin_y[`COIN_NUM], wall_x[`WALL_NUM], wall_y[`WALL_NUM];
+    logic [9:0] speed_x, speed_y, health_x, health_y;
     logic [7:0] Rb[8];
     logic [7:0] Gb[8];
     logic [7:0] Bb[8];
@@ -48,6 +50,8 @@ module color_mapper(
     logic [7:0] Rcg, Gcg, Bcg; // gold coin R G B
     logic [7:0] Rcs, Gcs, Bcs; // silver coin R G B
     logic [7:0] Rcc, Gcc, Bcc; // copper coin R G B
+    logic [7:0] Rs, Gs, Bs; // speed gear R G B
+    logic [7:0] Rht, Ght, Bht; // health gear R G B
     logic [7:0] Rw[`WALL_NUM], Gw[`WALL_NUM], Bw[`WALL_NUM]; // wall R G B
     logic [7:0] redout, greenout, blueout;
     logic [9:0] BallX[tank_num][ARRAY_SIZE], BallY[tank_num][ARRAY_SIZE];
@@ -127,6 +131,13 @@ module color_mapper(
     coin_copper_example coin_copper(.DrawX(coin_x[2]), .DrawY(coin_y[2]), .vga_clk(CLK), .blank(1'b1),
     .red(Rcc), .green(Gcc), .blue(Bcc));
 
+    // props
+
+    sspeed_example sspeed_example(.DrawX(speed_x), .DrawY(speed_y), .vga_clk(CLK), .blank(1'b1),
+    .red(Rs), .green(Gs), .blue(Bs));
+
+    health_example health_example(.DrawX(health_x), .DrawY(health_y), .vga_clk(CLK), .blank(1'b1),
+    .red(Rht), .green(Ght), .blue(Bht));
     // ram needed here (OCM) : needs import dual ports out for software 
     // then every time we get Draw X and Draw Y we check corresponding bytes to get pixel information.
     always_comb
@@ -149,6 +160,12 @@ module color_mapper(
             wall_x[k] = (DrawX - wall_pos_reg[k][10:1]) * 20;
             wall_y[k] = (DrawY - wall_pos_reg[k][20:11]) * 15;
         end
+
+        speed_x = DrawX - speed_reg[10:1];
+        speed_y = DrawY - speed_reg[20:11];
+
+        health_x = DrawX - cure_reg[10:1];
+        health_y = DrawY - cure_reg[20:11];
 
         ball_ind = tank_num * ARRAY_SIZE;
         if (blank) begin
@@ -299,6 +316,36 @@ module color_mapper(
                         redout = Rcc;
                         greenout = Gcc;
                         blueout = Bcc;
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if( speed_reg[0]
+                && DrawX >= speed_reg[10:1]
+                && DrawX < speed_reg[10:1] + 32
+                && DrawY >= speed_reg[20:11]
+                && DrawY < speed_reg[20:11] + 32
+                ) begin // speed
+                    if((Rs | Gs | Bs) != 8'h0) begin
+                        redout = Rs;
+                        greenout = Gs;
+                        blueout = Bs;
+                    end else begin
+                        redout = Rba;
+                        greenout = Gba;
+                        blueout = Bba;
+                    end
+                end else if( cure_reg[0]
+                && DrawX >= cure_reg[10:1]
+                && DrawX < cure_reg[10:1] + 32
+                && DrawY >= cure_reg[20:11]
+                && DrawY < cure_reg[20:11] + 32
+                ) begin // health gear
+                    if((Rht | Ght | Bht) != 8'h0) begin
+                        redout = Rht;
+                        greenout = Ght;
+                        blueout = Bht;
                     end else begin
                         redout = Rba;
                         greenout = Gba;

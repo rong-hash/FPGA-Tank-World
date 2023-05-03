@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<buildSystem id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784">
-			<storageModule id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784" moduleId="org.eclipse.cdt.core.settings"/>
+		<buildSystem id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477">
+			<storageModule id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477" moduleId="org.eclipse.cdt.core.settings"/>
 		</buildSystem>
-		<cconfiguration id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784">
+		<cconfiguration id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477">
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" description="" id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784" name="Nios II" parent="org.eclipse.cdt.build.core.prefbase.cfg">
-					<folderInfo id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784." name="/" resourcePath="">
-						<toolChain id="altera.nios2.mingw.gcc4.2095487382" name="MinGW Nios II GCC4" superClass="altera.nios2.mingw.gcc4">
-							<targetPlatform id="altera.nios2.mingw.gcc4.1959033553" name="Nios II" superClass="altera.nios2.mingw.gcc4"/>
-							<builder buildPath="${workspace_loc://tankworld}" id="altera.tool.gnu.builder.mingw.1143916690" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="altera.tool.gnu.builder.mingw"/>
-							<tool id="altera.tool.gnu.c.compiler.mingw.319216104" name="Nios II GCC C Compiler" superClass="altera.tool.gnu.c.compiler.mingw">
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1440715072" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+				<configuration buildProperties="" description="" id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477" name="Nios II" parent="org.eclipse.cdt.build.core.prefbase.cfg">
+					<folderInfo id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477." name="/" resourcePath="">
+						<toolChain id="altera.nios2.mingw.gcc4.1663664954" name="MinGW Nios II GCC4" superClass="altera.nios2.mingw.gcc4">
+							<targetPlatform id="altera.nios2.mingw.gcc4.307713937" name="Nios II" superClass="altera.nios2.mingw.gcc4"/>
+							<builder buildPath="${workspace_loc://tankworld}" id="altera.tool.gnu.builder.mingw.768120085" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="altera.tool.gnu.builder.mingw"/>
+							<tool id="altera.tool.gnu.c.compiler.mingw.591004411" name="Nios II GCC C Compiler" superClass="altera.tool.gnu.c.compiler.mingw">
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1455510617" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
-							<tool id="altera.tool.gnu.cpp.compiler.mingw.1191644901" name="Nios II GCC C++ Compiler" superClass="altera.tool.gnu.cpp.compiler.mingw">
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.676886881" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							<tool id="altera.tool.gnu.cpp.compiler.mingw.17359042" name="Nios II GCC C++ Compiler" superClass="altera.tool.gnu.cpp.compiler.mingw">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1484261990" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
-							<tool id="altera.tool.gnu.archiver.mingw.447855431" name="Nios II GCC Archiver" superClass="altera.tool.gnu.archiver.mingw"/>
-							<tool id="altera.tool.gnu.c.linker.mingw.1334908906" name="Nios II GCC C Linker" superClass="altera.tool.gnu.c.linker.mingw"/>
-							<tool id="altera.tool.gnu.assembler.mingw.938306985" name="Nios II GCC Assembler" superClass="altera.tool.gnu.assembler.mingw">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2011970592" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							<tool id="altera.tool.gnu.archiver.mingw.237208233" name="Nios II GCC Archiver" superClass="altera.tool.gnu.archiver.mingw"/>
+							<tool id="altera.tool.gnu.c.linker.mingw.1567969251" name="Nios II GCC C Linker" superClass="altera.tool.gnu.c.linker.mingw"/>
+							<tool id="altera.tool.gnu.assembler.mingw.803752827" name="Nios II GCC Assembler" superClass="altera.tool.gnu.assembler.mingw">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.709958375" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 				</configuration>
 			</storageModule>
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784" moduleId="org.eclipse.cdt.core.settings" name="Nios II">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477" moduleId="org.eclipse.cdt.core.settings" name="Nios II">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -40,15 +40,15 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="tankworld.null.225674321" name="tankworld"/>
+		<project id="tankworld.null.1293316359" name="tankworld"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784.;altera.tool.gnu.cpp.compiler.mingw.1191644901;cdt.managedbuild.tool.gnu.cpp.compiler.input.676886881">
+		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477.;altera.tool.gnu.cpp.compiler.mingw.17359042;cdt.managedbuild.tool.gnu.cpp.compiler.input.1484261990">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.1500997784.;altera.tool.gnu.c.compiler.mingw.319216104;cdt.managedbuild.tool.gnu.c.compiler.input.1440715072">
+		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.517576477.;altera.tool.gnu.c.compiler.mingw.591004411;cdt.managedbuild.tool.gnu.c.compiler.input.1455510617">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
@@ -80,10 +80,4 @@
 			</target>
 		</buildTargets>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Nios II">
-			<resource resourceType="PROJECT" workspacePath="/tankworld"/>
-		</configuration>
-	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

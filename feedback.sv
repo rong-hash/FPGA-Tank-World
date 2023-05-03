@@ -34,6 +34,8 @@ module feedback(
     input logic  [31:0] bullet_array[`TANK_NUM][`BULLET_NUM],  // bullet array
     input logic [9:0] tank_x[`TANK_NUM], tank_y[`TANK_NUM],
     input logic hit[`TANK_NUM * `BULLET_NUM][`TANK_NUM], // hit[i][j] = 1 means bullet i hit tank j
+    input logic to_cure[`TANK_NUM],
+    output logic cured,
     output logic [31:0] bullet_num_reg[`TANK_NUM], tank_pos_reg[`TANK_NUM],
     output logic [31:0] health_attr_reg_out[`TANK_NUM]
 );  
@@ -66,8 +68,10 @@ always_ff @(posedge Reset or posedge frame_clk ) begin
         for(k = 0; k < `TANK_NUM; k = k + 1) begin
             health_attr_reg[k] <= health_attr_reg[k] - hit[0][k] - hit[1][k] - hit[2][k] - 
             hit[3][k] - hit[4][k] - hit[5][k] - hit[6][k] - hit[7][k] - hit[8][k] - hit[9][k] - 
-            hit[10][k] - hit[11][k] - hit[12][k] - hit[13][k] - hit[14][k] - hit[15][k];
+            hit[10][k] - hit[11][k] - hit[12][k] - hit[13][k] - hit[14][k] - hit[15][k] + to_cure[k];
         end
+        if(!cured && (to_cure[0] || to_cure[1])) cured <= 1;
+        else cured <= 0;
 
         
     end

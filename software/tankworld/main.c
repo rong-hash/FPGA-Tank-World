@@ -282,6 +282,7 @@ int main() {
 					if(vga_ctrl->health[0] == 0 || vga_ctrl->health[1] == 0) {
 						draw_score_panel();
 					} else {
+						check_gears();
 						draw_wall();
 						draw_status_bars();
 						code = transfer_code((char*)kbdbuf.keycode);

@@ -451,13 +451,31 @@ If you don't have co-pilot then you should use chatgpt / python to do it.
 
 ---
 
-#### Props 
+### Props 
 
 
 * Coins need to be re-generated in software level (every time you update the score board, also check the corresponding registers). 
 
 * Add speed and health gear. (Check `coin.sv`, the logic is exactly the same) 
   * We need to make bullet speed and tank speed adjustable.
+
+---
+
+#### Implementation of Props
+
+Props are exactly like `coin` so we just need to reference `coin.sv` to finish props and draw it in `Color_mapper.sv`.
+
+- Problem
+  - With bullet related fields (like health), they operate at `frame_clk` which is slower than `CLK` (50MHz).
+  - But you need to write to `cure_reg` at `CLK` posedge
+
+
+---
+
+- Solution
+  - In `frame_clk`, after we take the cure, we set `cured` 1-bit reg to 1, then in next posedge reset it to 0 (each 1 will only exists in one clock cycle)
+  - In software, we generate a prop whose position should be at list 20 pixels away from the last postion. So we don't have to worry about consecutive feed.
+
 
 ---
 

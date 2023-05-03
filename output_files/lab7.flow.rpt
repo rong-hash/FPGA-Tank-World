@@ -1,5 +1,5 @@
 Flow report for lab7
-Tue May 02 10:43:09 2023
+Wed May 03 16:42:57 2023
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -40,20 +40,20 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Tue May 02 10:42:42 2023       ;
+; Flow Status                        ; Successful - Wed May 03 16:42:40 2023       ;
 ; Quartus Prime Version              ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
 ; Revision Name                      ; lab7                                        ;
 ; Top-level Entity Name              ; lab7                                        ;
 ; Family                             ; MAX 10                                      ;
 ; Device                             ; 10M50DAF484C7G                              ;
 ; Timing Models                      ; Final                                       ;
-; Total logic elements               ; 33,122 / 49,760 ( 67 % )                    ;
-;     Total combinational functions  ; 32,112 / 49,760 ( 65 % )                    ;
-;     Dedicated logic registers      ; 4,640 / 49,760 ( 9 % )                      ;
-; Total registers                    ; 4709                                        ;
+; Total logic elements               ; 33,685 / 49,760 ( 68 % )                    ;
+;     Total combinational functions  ; 32,649 / 49,760 ( 66 % )                    ;
+;     Dedicated logic registers      ; 4,726 / 49,760 ( 9 % )                      ;
+; Total registers                    ; 4795                                        ;
 ; Total pins                         ; 141 / 360 ( 39 % )                          ;
 ; Total virtual pins                 ; 0                                           ;
-; Total memory bits                  ; 456,904 / 1,677,312 ( 27 % )                ;
+; Total memory bits                  ; 479,432 / 1,677,312 ( 29 % )                ;
 ; Embedded Multiplier 9-bit elements ; 64 / 288 ( 22 % )                           ;
 ; Total PLLs                         ; 1 / 4 ( 25 % )                              ;
 ; UFM blocks                         ; 0 / 1 ( 0 % )                               ;
@@ -66,7 +66,7 @@ refer to the applicable agreement for further details.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 05/02/2023 10:25:33 ;
+; Start date & time ; 05/03/2023 16:37:57 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; lab7                ;
 +-------------------+---------------------+
@@ -77,7 +77,7 @@ refer to the applicable agreement for further details.
 +-------------------------------------+-----------------------------------------------------------+---------------+-------------+----------------+
 ; Assignment Name                     ; Value                                                     ; Default Value ; Entity Name ; Section Id     ;
 +-------------------------------------+-----------------------------------------------------------+---------------+-------------+----------------+
-; COMPILER_SIGNATURE_ID               ; 10995770589201.168304113223424                            ; --            ; --          ; --             ;
+; COMPILER_SIGNATURE_ID               ; 10995770589189.168314987614772                            ; --            ; --          ; --             ;
 ; EDA_OUTPUT_DATA_FORMAT              ; Systemverilog Hdl                                         ; --            ; --          ; eda_simulation ;
 ; EDA_TIME_SCALE                      ; 1 ps                                                      ; --            ; --          ; eda_simulation ;
 ; MAX_CORE_JUNCTION_TEMP              ; 85                                                        ; --            ; --          ; --             ;
@@ -97,7 +97,7 @@ refer to the applicable agreement for further details.
 ; PROJECT_OUTPUT_DIRECTORY            ; output_files                                              ; --            ; --          ; --             ;
 ; SLD_FILE                            ; lab7soc/synthesis/lab7soc.regmap                          ; --            ; --          ; --             ;
 ; SLD_FILE                            ; lab7soc/synthesis/lab7soc.debuginfo                       ; --            ; --          ; --             ;
-; SLD_INFO                            ; QSYS_NAME lab7soc HAS_SOPCINFO 1 GENERATION_ID 1683041044 ; --            ; lab7soc     ; --             ;
+; SLD_INFO                            ; QSYS_NAME lab7soc HAS_SOPCINFO 1 GENERATION_ID 1683148591 ; --            ; lab7soc     ; --             ;
 ; SOPCINFO_FILE                       ; lab7soc/synthesis/../../lab7soc.sopcinfo                  ; --            ; --          ; --             ;
 ; SYNTHESIS_ONLY_QIP                  ; On                                                        ; --            ; --          ; --             ;
 +-------------------------------------+-----------------------------------------------------------+---------------+-------------+----------------+
@@ -108,11 +108,11 @@ refer to the applicable agreement for further details.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:03:57     ; 1.0                     ; 5314 MB             ; 00:04:23                           ;
-; Fitter               ; 00:12:44     ; 1.3                     ; 6592 MB             ; 00:10:29                           ;
-; Assembler            ; 00:00:08     ; 1.0                     ; 4790 MB             ; 00:00:08                           ;
-; Timing Analyzer      ; 00:00:26     ; 5.0                     ; 5185 MB             ; 00:01:36                           ;
-; Total                ; 00:17:15     ; --                      ; --                  ; 00:16:36                           ;
+; Analysis & Synthesis ; 00:02:29     ; 1.0                     ; 5342 MB             ; 00:02:54                           ;
+; Fitter               ; 00:01:58     ; 2.5                     ; 7027 MB             ; 00:09:11                           ;
+; Assembler            ; 00:00:04     ; 1.0                     ; 4792 MB             ; 00:00:04                           ;
+; Timing Analyzer      ; 00:00:15     ; 7.1                     ; 5234 MB             ; 00:01:25                           ;
+; Total                ; 00:04:46     ; --                      ; --                  ; 00:13:34                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -121,10 +121,10 @@ refer to the applicable agreement for further details.
 +----------------------+------------------+------------+------------+----------------+
 ; Module Name          ; Machine Hostname ; OS Name    ; OS Version ; Processor type ;
 +----------------------+------------------+------------+------------+----------------+
-; Analysis & Synthesis ; LAPTOP-QQIDUNHC  ; Windows 10 ; 10.0       ; x86_64         ;
-; Fitter               ; LAPTOP-QQIDUNHC  ; Windows 10 ; 10.0       ; x86_64         ;
-; Assembler            ; LAPTOP-QQIDUNHC  ; Windows 10 ; 10.0       ; x86_64         ;
-; Timing Analyzer      ; LAPTOP-QQIDUNHC  ; Windows 10 ; 10.0       ; x86_64         ;
+; Analysis & Synthesis ; LAPTOP-KTFQVA08  ; Windows 10 ; 10.0       ; x86_64         ;
+; Fitter               ; LAPTOP-KTFQVA08  ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; LAPTOP-KTFQVA08  ; Windows 10 ; 10.0       ; x86_64         ;
+; Timing Analyzer      ; LAPTOP-KTFQVA08  ; Windows 10 ; 10.0       ; x86_64         ;
 +----------------------+------------------+------------+------------+----------------+
 
 

@@ -36,8 +36,9 @@ struct TEXT_VGA_STRUCT {
 	// ------- below are hardware registers(reigsters' value given by hardware), do not modify -------
 	alt_u32 bullet_num[2]; // bullet number register (number of bullets left)
 	alt_u32 tank_pos[2]; // tank position register
-
-	alt_u32 padding1 [2009]; // second 2048 (4B)
+	// ------- below are prop register : read-write
+	alt_u32 gear_attr[2]; // 0 : health_gear 1 : speed_gear
+	alt_u32 padding1 [2007]; // second 2048 (4B)
 };
 
 

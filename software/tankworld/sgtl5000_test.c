@@ -17,23 +17,24 @@
 #include "sgtl5000/sgtl5000.h"
 #include "test.h"
 
-
+#ifdef RUN_TEST
 void setLED(int LED)
 {
-	IOWR_ALTERA_AVALON_PIO_DATA(LEDS_PIO_BASE, (IORD_ALTERA_AVALON_PIO_DATA(LEDS_PIO_BASE) | (0x001 << LED)));
+	IOWR_ALTERA_AVALON_PIO_DATA(LED_BASE, (IORD_ALTERA_AVALON_PIO_DATA(LED_BASE) | (0x001 << LED)));
 }
 
 void clearLED(int LED)
 {
-	IOWR_ALTERA_AVALON_PIO_DATA(LEDS_PIO_BASE, (IORD_ALTERA_AVALON_PIO_DATA(LEDS_PIO_BASE) & ~(0x001 << LED)));
+	IOWR_ALTERA_AVALON_PIO_DATA(LED_BASE, (IORD_ALTERA_AVALON_PIO_DATA(LED_BASE) & ~(0x001 << LED)));
 
 }
+
 
 void printSignedHex0(signed char value)
 {
 	BYTE tens = 0;
 	BYTE ones = 0;
-	WORD pio_val = IORD_ALTERA_AVALON_PIO_DATA(HEX_DIGITS_PIO_BASE);
+	WORD pio_val = IORD_ALTERA_AVALON_PIO_DATA(HEX_BASE);
 	if (value < 0)
 	{
 		setLED(11);
@@ -57,14 +58,14 @@ void printSignedHex0(signed char value)
 	pio_val |= (tens << 12);
 	pio_val |= (ones << 8);
 
-	IOWR_ALTERA_AVALON_PIO_DATA(HEX_DIGITS_PIO_BASE, pio_val);
+	IOWR_ALTERA_AVALON_PIO_DATA(HEX_BASE, pio_val);
 }
 
 void printSignedHex1(signed char value)
 {
 	BYTE tens = 0;
 	BYTE ones = 0;
-	DWORD pio_val = IORD_ALTERA_AVALON_PIO_DATA(HEX_DIGITS_PIO_BASE);
+	DWORD pio_val = IORD_ALTERA_AVALON_PIO_DATA(HEX_BASE);
 	if (value < 0)
 	{
 		setLED(10);
@@ -90,10 +91,9 @@ void printSignedHex1(signed char value)
 	pio_val |= (tens << 4);
 	pio_val |= (ones << 0);
 
-	IOWR_ALTERA_AVALON_PIO_DATA(HEX_DIGITS_PIO_BASE, pio_val);
+	IOWR_ALTERA_AVALON_PIO_DATA(HEX_BASE, pio_val);
 }
 
-#ifdef RUN_TEST
 int main()
 {
 	ALT_AVALON_I2C_DEV_t *i2c_dev; //pointer to instance structure

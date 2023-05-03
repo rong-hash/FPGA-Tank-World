@@ -1,12 +1,12 @@
-!SESSION 2023-05-01 11:07:49.152 -----------------------------------------------
+!SESSION 2023-05-03 15:19:49.228 -----------------------------------------------
 eclipse.buildId=4.5.2.M20160212-1500
 java.version=1.8.0_05
 java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_CN
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization C:/intelfpga_lite/18.1/nios2eds/bin/eclipse_nios2/plugin_customization.ini
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization C:/intelfpga_lite/18.1/nios2eds/bin/eclipse_nios2/plugin_customization.ini
 
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-01 11:08:24.828
+!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-03 15:19:56.026
 !MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
 !STACK 0
 com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
@@ -25,23 +25,26 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
 	... 9 more
 
-!ENTRY org.eclipse.cdt.core 1 0 2023-05-01 11:09:22.182
-!MESSAGE Indexed 'tankworld_bsp' (85 sources, 68 headers) in 1.53 sec: 1,618 declarations; 4,260 references; 120 unresolved inclusions; 6 syntax errors; 192 unresolved names (3.2%)
+!ENTRY org.eclipse.cdt.core 1 0 2023-05-03 15:20:38.536
+!MESSAGE Indexed 'tankworld_bsp' (85 sources, 98 headers) in 1.3 sec: 2,219 declarations; 5,482 references; 97 unresolved inclusions; 6 syntax errors; 173 unresolved names (2.2%)
 
-!ENTRY org.eclipse.cdt.core 1 0 2023-05-01 11:09:28.076
+!ENTRY org.eclipse.cdt.core 1 0 2023-05-03 15:20:40.658
 !MESSAGE Indexed 'tankworld' (0 sources, 0 headers) in 0 sec: 0 declarations; 0 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0%)
-!SESSION 2023-05-01 17:15:29.852 -----------------------------------------------
+
+!ENTRY com.altera.sbtgui.launch 1 0 2023-05-03 15:37:54.740
+!MESSAGE Executing: [C:/intelfpga_lite/18.1/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683077927]
+
+!ENTRY com.altera.sbtgui.launch 1 0 2023-05-03 15:37:56.696
+!MESSAGE Executing: [C:/intelfpga_lite/18.1/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683077927 /cygdrive/d/_NewTerm/ECE385/FPGA-Tank-World/software/tankworld/tankworld.elf]
+!SESSION 2023-05-03 15:48:27.629 -----------------------------------------------
 eclipse.buildId=4.5.2.M20160212-1500
 java.version=1.8.0_05
 java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_CN
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization C:/intelfpga_lite/18.1/nios2eds/bin/eclipse_nios2/plugin_customization.ini
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization C:/intelfpga_lite/18.1/nios2eds/bin/eclipse_nios2/plugin_customization.ini
 
-!ENTRY org.eclipse.core.resources 2 10035 2023-05-01 17:15:34.079
-!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
-
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-01 17:15:43.003
+!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-03 15:48:35.505
 !MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
 !STACK 0
 com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
@@ -60,74 +63,20 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
 	... 9 more
 
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:25:12.650
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
+!ENTRY com.altera.sbtgui.launch 1 0 2023-05-03 15:48:57.063
+!MESSAGE Executing: [C:/intelfpga_lite/18.1/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683077927]
 
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:25:15.299
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:36:41.956
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:36:44.524
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:43:08.327
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:43:11.041
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:45:10.374
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:45:11.398
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:45:13.936
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:49:29.042
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:49:31.722
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:52:19.772
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:52:22.343
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:58:52.389
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 17:58:55.065
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 18:09:19.099
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 18:09:21.800
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 18:28:59.675
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 18:29:02.231
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-!SESSION 2023-05-01 20:10:50.831 -----------------------------------------------
+!ENTRY com.altera.sbtgui.launch 1 0 2023-05-03 15:48:59.068
+!MESSAGE Executing: [C:/intelfpga_lite/18.1/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683077927 /cygdrive/d/_NewTerm/ECE385/FPGA-Tank-World/software/tankworld/tankworld.elf]
+!SESSION 2023-05-03 16:02:45.935 -----------------------------------------------
 eclipse.buildId=4.5.2.M20160212-1500
 java.version=1.8.0_05
 java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_CN
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization C:/intelfpga_lite/18.1/nios2eds/bin/eclipse_nios2/plugin_customization.ini
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization C:/intelfpga_lite/18.1/nios2eds/bin/eclipse_nios2/plugin_customization.ini
 
-!ENTRY org.eclipse.core.resources 2 10035 2023-05-01 20:10:53.431
-!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
-
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-01 20:11:00.915
+!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-03 16:02:54.239
 !MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
 !STACK 0
 com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
@@ -146,38 +95,20 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
 	... 9 more
 
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 20:12:14.136
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
+!ENTRY com.altera.sbtgui.launch 1 0 2023-05-03 16:03:24.005
+!MESSAGE Executing: [C:/intelfpga_lite/18.1/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683147129]
 
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 20:12:16.399
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 20:16:14.632
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 20:16:15.517
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 20:16:18.008
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 20:22:40.637
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 20:22:41.546
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682957511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 20:22:43.761
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682957511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-!SESSION 2023-05-01 22:09:07.458 -----------------------------------------------
+!ENTRY com.altera.sbtgui.launch 1 0 2023-05-03 16:03:25.963
+!MESSAGE Executing: [C:/intelfpga_lite/18.1/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683147129 /cygdrive/d/_NewTerm/ECE385/FPGA-Tank-World/software/tankworld/tankworld.elf]
+!SESSION 2023-05-03 16:38:16.706 -----------------------------------------------
 eclipse.buildId=4.5.2.M20160212-1500
 java.version=1.8.0_05
 java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=zh_CN
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization C:/intelfpga_lite/18.1/nios2eds/bin/eclipse_nios2/plugin_customization.ini
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization C:/intelfpga_lite/18.1/nios2eds/bin/eclipse_nios2/plugin_customization.ini
 
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-01 22:09:18.245
+!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-03 16:38:26.302
 !MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
 !STACK 0
 com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
@@ -196,231 +127,34 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
 	... 9 more
 
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 22:10:32.593
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682996607]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 22:10:34.845
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682996607 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-!SESSION 2023-05-01 23:11:30.010 -----------------------------------------------
-eclipse.buildId=4.5.2.M20160212-1500
-java.version=1.8.0_05
-java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-
-!ENTRY org.eclipse.core.resources 2 10035 2023-05-01 23:11:36.950
-!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
-
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-01 23:11:45.224
-!MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
+!ENTRY com.altera.sbtgui.launch 4 0 2023-05-03 16:44:33.638
+!MESSAGE Unable to validate connection settings.
 !STACK 0
-com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:176)
-	at com.google.gson.Gson.fromJson(Gson.java:803)
-	at com.google.gson.Gson.fromJson(Gson.java:768)
-	at com.google.gson.Gson.fromJson(Gson.java:717)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.json.Json.deserialize(Json.java:88)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.IO.refreshConfiguration(IO.java:70)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.ServerConnection.startUp(ServerConnection.java:101)
-	at com.google.common.util.concurrent.AbstractIdleService$2$1.run(AbstractIdleService.java:54)
-	at com.google.common.util.concurrent.Callables$3.run(Callables.java:93)
-	at java.lang.Thread.run(Unknown Source)
-Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:374)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
-	... 9 more
+java.lang.Exception
+	at com.altera.embeddedsw.flash.model.internal.SystemConsoleConnectionModel.validateConnectionSettings(SystemConsoleConnectionModel.java:555)
+	at com.altera.sbtgui.launch.hardware.AbstractNios2CLaunchDelegate.launch(AbstractNios2CLaunchDelegate.java:115)
+	at com.altera.sbtgui.launch.hardware.Nios2HardwareLaunchDelegate.launch(Nios2HardwareLaunchDelegate.java:98)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:885)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:739)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:1039)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin$8.run(DebugUIPlugin.java:1256)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
 
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:14:15.972
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682996607]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:14:18.156
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682996607 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:24:53.988
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:24:54.839
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682996607]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:24:57.011
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682996607 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:33:29.253
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682996607]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:33:31.443
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682996607 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:34:30.023
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:34:30.871
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682996607]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:34:33.151
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682996607 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:35:44.897
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:35:45.741
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1682996607]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:35:47.902
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1682996607 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:54:56.911
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:54:58.105
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683002511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:55:00.273
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683002511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:57:12.792
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:57:13.640
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683002511]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-01 23:57:15.927
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683002511 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-!SESSION 2023-05-02 00:05:02.562 -----------------------------------------------
-eclipse.buildId=4.5.2.M20160212-1500
-java.version=1.8.0_05
-java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-02 00:05:12.267
-!MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
+!ENTRY com.altera.sbtgui.launch 4 0 2023-05-03 16:44:33.653
+!MESSAGE Unable to validate connection settings.
 !STACK 0
-com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:176)
-	at com.google.gson.Gson.fromJson(Gson.java:803)
-	at com.google.gson.Gson.fromJson(Gson.java:768)
-	at com.google.gson.Gson.fromJson(Gson.java:717)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.json.Json.deserialize(Json.java:88)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.IO.refreshConfiguration(IO.java:70)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.ServerConnection.startUp(ServerConnection.java:101)
-	at com.google.common.util.concurrent.AbstractIdleService$2$1.run(AbstractIdleService.java:54)
-	at com.google.common.util.concurrent.Callables$3.run(Callables.java:93)
-	at java.lang.Thread.run(Unknown Source)
-Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:374)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
-	... 9 more
+java.lang.Exception
+	at com.altera.embeddedsw.flash.model.internal.SystemConsoleConnectionModel.validateConnectionSettings(SystemConsoleConnectionModel.java:555)
+	at com.altera.sbtgui.launch.hardware.AbstractNios2CLaunchDelegate.launch(AbstractNios2CLaunchDelegate.java:115)
+	at com.altera.sbtgui.launch.hardware.Nios2HardwareLaunchDelegate.launch(Nios2HardwareLaunchDelegate.java:98)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:885)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:739)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:1039)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin$8.run(DebugUIPlugin.java:1256)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
 
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 00:06:05.492
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683003541]
+!ENTRY com.altera.sbtgui.launch 1 0 2023-05-03 16:44:45.392
+!MESSAGE Executing: [C:/intelfpga_lite/18.1/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683148591]
 
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 00:06:07.686
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683003541 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 00:08:44.272
-!MESSAGE Terminated Launch with connection: 10USB-Blaster on localhost [USB-0]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 00:08:45.148
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683003541]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 00:08:47.347
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683003541 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-!SESSION 2023-05-02 01:06:23.931 -----------------------------------------------
-eclipse.buildId=4.5.2.M20160212-1500
-java.version=1.8.0_05
-java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-02 01:06:35.071
-!MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
-!STACK 0
-com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:176)
-	at com.google.gson.Gson.fromJson(Gson.java:803)
-	at com.google.gson.Gson.fromJson(Gson.java:768)
-	at com.google.gson.Gson.fromJson(Gson.java:717)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.json.Json.deserialize(Json.java:88)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.IO.refreshConfiguration(IO.java:70)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.ServerConnection.startUp(ServerConnection.java:101)
-	at com.google.common.util.concurrent.AbstractIdleService$2$1.run(AbstractIdleService.java:54)
-	at com.google.common.util.concurrent.Callables$3.run(Callables.java:93)
-	at java.lang.Thread.run(Unknown Source)
-Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:374)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
-	... 9 more
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 01:07:16.312
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683007076]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 01:07:18.517
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683007076 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-!SESSION 2023-05-02 09:13:26.455 -----------------------------------------------
-eclipse.buildId=4.5.2.M20160212-1500
-java.version=1.8.0_05
-java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-02 09:13:41.032
-!MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
-!STACK 0
-com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:176)
-	at com.google.gson.Gson.fromJson(Gson.java:803)
-	at com.google.gson.Gson.fromJson(Gson.java:768)
-	at com.google.gson.Gson.fromJson(Gson.java:717)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.json.Json.deserialize(Json.java:88)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.IO.refreshConfiguration(IO.java:70)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.ServerConnection.startUp(ServerConnection.java:101)
-	at com.google.common.util.concurrent.AbstractIdleService$2$1.run(AbstractIdleService.java:54)
-	at com.google.common.util.concurrent.Callables$3.run(Callables.java:93)
-	at java.lang.Thread.run(Unknown Source)
-Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:374)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
-	... 9 more
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 09:14:57.041
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683036106]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 09:14:59.571
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683036106 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
-!SESSION 2023-05-02 10:43:39.338 -----------------------------------------------
-eclipse.buildId=4.5.2.M20160212-1500
-java.version=1.8.0_05
-java.vendor=Oracle Corporation
-BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
-Framework arguments:  -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.cpp.product -pluginCustomization D:/programfiles/quartus/nios2eds/bin/eclipse_nios2/plugin_customization.ini
-
-!ENTRY org.eclipse.epp.logging.aeri.ide 2 16 2023-05-02 10:43:55.036
-!MESSAGE Server ‘org.eclipse.epp.logging.aeri.ide.server’ failed with exception: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1. ; version: 1.100.0.v20160217-0435
-!STACK 0
-com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:176)
-	at com.google.gson.Gson.fromJson(Gson.java:803)
-	at com.google.gson.Gson.fromJson(Gson.java:768)
-	at com.google.gson.Gson.fromJson(Gson.java:717)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.json.Json.deserialize(Json.java:88)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.IO.refreshConfiguration(IO.java:70)
-	at org.eclipse.epp.internal.logging.aeri.ide.server.mars.ServerConnection.startUp(ServerConnection.java:101)
-	at com.google.common.util.concurrent.AbstractIdleService$2$1.run(AbstractIdleService.java:54)
-	at com.google.common.util.concurrent.Callables$3.run(Callables.java:93)
-	at java.lang.Thread.run(Unknown Source)
-Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
-	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:374)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:165)
-	... 9 more
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 10:44:55.137
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --sidp=0x58 --id=0x0 --timestamp=1683041044]
-
-!ENTRY com.altera.sbtgui.launch 1 0 2023-05-02 10:44:57.630
-!MESSAGE Executing: [D:/programfiles/quartus/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683041044 /cygdrive/d/Study/Grade3SS/ECE385/tank_world/software/tankworld/tankworld.elf]
+!ENTRY com.altera.sbtgui.launch 1 0 2023-05-03 16:44:47.357
+!MESSAGE Executing: [C:/intelfpga_lite/18.1/quartus\bin64\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --sidp=0x58 --id=0x0 --timestamp=1683148591 /cygdrive/d/_NewTerm/ECE385/FPGA-Tank-World/software/tankworld/tankworld.elf]

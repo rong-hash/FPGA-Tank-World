@@ -2,8 +2,13 @@
 #include "game.h"
 #include <stdio.h>
 
+// SCREEN PROPERTY
+#define SCREEN_WIDTH_PIXEL              640
+#define SCREEN_HEIGHT_PIXEL             480
+
 // GAME
 #define SET_GAME_ATTR_START(x)          (x)
+#define REGENERATE_RADIUS               60
 // MAP_NUM: 1: wait to choose 2: U 4: I 8: C 
 #define SET_GAME_ATTR_MAP_NUM(x)        (x<<1)
 #define SET_GAME_ATTR_HEALTH(x)         (x<<5)
@@ -11,7 +16,10 @@
 #define MAX_HEALTH_DEFAULT          5
 
 // WALL
+#define WALL_NUM                    16
 #define GET_WALL_POS(x,y)           (1 | (x<<1) | (y<<11))
+#define GET_WALL_X(pos)             ((pos>>1) & 0x3FF)  
+#define GET_WALL_Y(pos)             ((pos>>11) & 0x3FF)
 
 // MAP_NUM
 #define UMAP                        1
@@ -30,6 +38,9 @@
 // COIN
 #define COIN_TYPES                  3
 #define GET_POS_COIN(x,y)           (1 | (x<<1) | (y<<11))
+#define GET_COIN_X(pos)             ((pos>>1) & 0x3FF)
+#define GET_COIN_Y(pos)             ((pos>>11) & 0x3FF)
+#define COIN_EXIST(x)               (x & 1)
 
 #define GOLD_COIN                   0
 #define SILVER_COIN                 1
@@ -47,6 +58,19 @@
 
 #define BRONZE_COIN_DEFAULT_X       320
 #define BRONZE_COIN_DEFAULT_Y       380
+
+// GEAR
+#define GEAR_TYPES                  2
+#define GET_POS_GEAR(x,y)           (1 | (x<<1) | (y<<11))
+#define GET_GEAR_X(pos)             ((pos>>1) & 0x3FF)
+#define GET_GEAR_Y(pos)             ((pos>>11) & 0x3FF)
+#define GEAR_EXIST(x)               (x & 1)
+
+#define HEALTH_GEAR_DEAFULT_X       (320 - 16)
+#define HEALTH_GEAR_DEAFULT_Y       (200 - 16)
+
+#define SPEED_GEAR_DEAFULT_X        (320 - 16)
+#define SPEED_GEAR_DEAFULT_Y        (400 - 16)
 
 // MENU
 #define TEXT_SCREEN_X               80
@@ -111,9 +135,18 @@ void game_init(void) {
     for(i=0; i<TANK_NUM; i++) vga_ctrl->score[i] = 0;
     vga_ctrl->init_pos[0] = GET_POS(TANK_1_DEAULT_X, TANK_1_DEAULT_Y);
     vga_ctrl->init_pos[1] = GET_POS(TANK_2_DEAULT_X, TANK_2_DEAULT_Y);
-    // @todo
-    // currently no walls, will be added 
-    for(i=0; i<16; i++) vga_ctrl->wall_pos[i] = 0;
+    for(i = 0; i < WALL_NUM; i++) vga_ctrl->wall_pos[i] = 0;
+    vga_ctrl->gear_attr[0] = GET_POS_GEAR(HEALTH_GEAR_DEAFULT_X, HEALTH_GEAR_DEAFULT_Y);
+    vga_ctrl->gear_attr[1] = GET_POS_GEAR(SPEED_GEAR_DEAFULT_X, SPEED_GEAR_DEAFULT_Y);
+    printf("health gear pos (x,y) = (%lu, %lu)\n", GET_GEAR_X(vga_ctrl->gear_attr[0]), GET_GEAR_Y(vga_ctrl->gear_attr[0]));
+    printf("speed gear pos (x,y) = (%lu, %lu)\n", GET_GEAR_X(vga_ctrl->gear_attr[1]), GET_GEAR_Y(vga_ctrl->gear_attr[1]));
+    if(vga_ctrl->gear_attr[0] & 1) {
+        printf("health gear exist!\n");
+    }
+    if(vga_ctrl->gear_attr[1] & 1) {
+        printf("speed gear exist!\n");
+    }
+    usleep(1000000);
 }
 
 /**
@@ -520,3 +553,93 @@ void menu_control(char* key) {
     }
 }
 
+// check if two rectangles intersect
+static int _check_overlap(int x1, int y1, int x2, int y2) {
+    if (x1 > x2 + 32 || x2 > x1 + 32 || y1 > y2 + 32 || y2 > y1 + 32)
+        return 0;
+    else
+        return 1;
+}
+
+
+// check if current drawing gear with has upper left point(x,y) does not overlap with coins, walls
+// @note it can overlap with other gears
+static int check_gear_legal_pos(alt_u32 x, alt_u32 y) {
+    int coin_x[COIN_TYPES], coin_y[COIN_TYPES];
+    int wall_x[WALL_NUM], wall_y[WALL_NUM];
+    int i;
+    if(x < 0 || x >= SCREEN_WIDTH_PIXEL || y < 0 || y >= SCREEN_HEIGHT_PIXEL) {
+        return 0;
+    }
+
+    for(i = 0; i < COIN_TYPES; i++) { // very special, coin's coordinate is the center, we need to convert them to upper left
+        coin_x[i] = GET_COIN_X(vga_ctrl->coin_attr[i]) - 16;
+        coin_y[i] = GET_COIN_Y(vga_ctrl->coin_attr[i]) - 16;
+    }
+    for(i = 0; i < WALL_NUM; i++) {
+        wall_x[i] = GET_WALL_X(vga_ctrl->wall_pos[i]);
+        wall_y[i] = GET_WALL_Y(vga_ctrl->wall_pos[i]);
+    }
+    // 
+    // check if overlap with coins
+    for(i = 0; i < COIN_TYPES; i++) {
+        if(COIN_EXIST(vga_ctrl->coin_attr[i]) && _check_overlap(x, y, coin_x[i], coin_y[i])) {
+            return 0;
+        }
+    }
+
+    // check if overlap with walls
+
+    for(i = 0; i < WALL_NUM; i++) {
+        if(_check_overlap(x, y, wall_x[i], wall_y[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+} 
+
+// @note do not use unsigned here, we have subtraction
+static int calc_dis(int x1, int y1, int x2, int y2) {
+    return (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2);
+}
+
+/**
+ * @brief check if any gear is not on screen, if so, we put a new gear on the screen.
+ */
+void check_gears(void) {
+    static int last_coin_pos[COIN_TYPES][2] = {{GOLD_COIN_DEFAULT_X, GOLD_COIN_DEFAULT_Y}, {SILVER_COIN_DEFAULT_X, SILVER_COIN_DEFAULT_Y}, {BRONZE_COIN_DEFAULT_X, BRONZE_COIN_DEFAULT_Y}};
+    static int last_gear_pos[GEAR_TYPES][2] = {{HEALTH_GEAR_DEAFULT_X, HEALTH_GEAR_DEAFULT_Y}, {SPEED_GEAR_DEAFULT_X, SPEED_GEAR_DEAFULT_Y}};
+    int new_x, new_y;
+    int i;
+    for(i = 0; i < COIN_TYPES; i++) {
+        new_x = rand() % SCREEN_WIDTH_PIXEL + 16, new_y = rand() % SCREEN_HEIGHT_PIXEL + 16;
+        if(!COIN_EXIST(vga_ctrl->coin_attr[i])) {
+            if(check_gear_legal_pos(new_x, new_y)) { // check if new position has overlap with other gears and if new position is on screen
+                if(calc_dis(new_x, new_y, last_coin_pos[i][0], last_coin_pos[i][1]) < REGENERATE_RADIUS * REGENERATE_RADIUS) { // too close to last gear, not fair
+                    continue;
+                }
+                vga_ctrl->coin_attr[i] = GET_POS_COIN(new_x, new_y);
+                last_coin_pos[i][0] = new_x;
+                last_coin_pos[i][1] = new_y;
+            } 
+            // don't wait because we don't re-generate a new position    
+        }
+    }
+
+    for(i = 0; i < GEAR_TYPES; i++) {
+        new_x = rand() % SCREEN_WIDTH_PIXEL, new_y = rand() % SCREEN_HEIGHT_PIXEL;
+        if(!GEAR_EXIST(vga_ctrl->gear_attr[i])) {
+            if(check_gear_legal_pos(new_x, new_y)) {
+                if(calc_dis(new_x, new_y, last_gear_pos[i][0], last_gear_pos[i][1]) < REGENERATE_RADIUS * REGENERATE_RADIUS) { // too close to last gear, not fair
+                    continue;
+                }
+                vga_ctrl->gear_attr[i] = GET_POS_GEAR(new_x, new_y);
+                last_gear_pos[i][0] = new_x;
+                last_gear_pos[i][1] = new_y;
+            } 
+            // don't wait because we don't re-generate a new position    
+        }
+    }
+
+}

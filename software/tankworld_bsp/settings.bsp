@@ -2,9 +2,9 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>May 2, 2023 10:44:12 AM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1683042252244</BspGeneratedUnixTimeStamp>
-        <BspGeneratedLocation>D:\Study\Grade3SS\ECE385\tank_world\software\tankworld_bsp</BspGeneratedLocation>
+        <BspGeneratedTimeStamp>May 3, 2023 4:43:25 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1683150205871</BspGeneratedUnixTimeStamp>
+        <BspGeneratedLocation>D:\_NewTerm\ECE385\FPGA-Tank-World\software\tankworld_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\lab7soc.sopcinfo</SopcDesignFile>
         <JdiFile>default</JdiFile>
