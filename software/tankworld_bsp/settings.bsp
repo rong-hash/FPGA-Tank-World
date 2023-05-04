@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>May 3, 2023 4:43:25 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1683150205871</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>May 3, 2023 10:33:58 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1683171238051</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>D:\_NewTerm\ECE385\FPGA-Tank-World\software\tankworld_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\lab7soc.sopcinfo</SopcDesignFile>
@@ -991,6 +991,12 @@
         <MemoryMap>
                 <slaveDescriptor>VGA_text_mode_controller_0</slaveDescriptor>
                 <addressRange>0x00010000 - 0x00013FFF</addressRange>
+                <addressSpan>16384</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>sound_0</slaveDescriptor>
+                <addressRange>0x00020000 - 0x00023FFF</addressRange>
                 <addressSpan>16384</addressSpan>
                 <attributes/>
         </MemoryMap>

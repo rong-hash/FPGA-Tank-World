@@ -5,6 +5,7 @@
 // SCREEN PROPERTY
 #define SCREEN_WIDTH_PIXEL              640
 #define SCREEN_HEIGHT_PIXEL             480
+#define COMMON_UNIT                     32 // most items are 32 * 32
 
 // GAME
 #define SET_GAME_ATTR_START(x)          (x)
@@ -17,6 +18,7 @@
 
 // WALL
 #define WALL_NUM                    16
+#define WALL_LEN                    32 // WIDTH = HEIGHT = 32
 #define GET_WALL_POS(x,y)           (1 | (x<<1) | (y<<11))
 #define GET_WALL_X(pos)             ((pos>>1) & 0x3FF)  
 #define GET_WALL_Y(pos)             ((pos>>11) & 0x3FF)
@@ -38,6 +40,7 @@
 // COIN
 #define COIN_TYPES                  3
 #define GET_POS_COIN(x,y)           (1 | (x<<1) | (y<<11))
+// & 3ff is to extract the last 10 bits
 #define GET_COIN_X(pos)             ((pos>>1) & 0x3FF)
 #define GET_COIN_Y(pos)             ((pos>>11) & 0x3FF)
 #define COIN_EXIST(x)               (x & 1)
@@ -66,21 +69,23 @@
 #define GET_GEAR_Y(pos)             ((pos>>11) & 0x3FF)
 #define GEAR_EXIST(x)               (x & 1)
 
+// -16 is because it's more intuitive to specify the center then we find the top left corner of the gear
+
 #define HEALTH_GEAR_DEAFULT_X       (320 - 16)
-#define HEALTH_GEAR_DEAFULT_Y       (200 - 16)
+#define HEALTH_GEAR_DEAFULT_Y       (40 - 16)
 
 #define SPEED_GEAR_DEAFULT_X        (320 - 16)
-#define SPEED_GEAR_DEAFULT_Y        (400 - 16)
+#define SPEED_GEAR_DEAFULT_Y        (430 - 16)
 
 // MENU
 #define TEXT_SCREEN_X               80
 #define TEXT_SCREEN_Y               30
-#define MENU_HEIGHT                 22
+#define MENU_HEIGHT                 15
 #define MENU_WIDTH                  40
 
 // MENU : line spacing
 #define MENU_STARTING_ROW           4
-#define MENU_UPPER_PADDING          2
+#define MENU_UPPER_PADDING          1
 #define MENU_PADDING_1              3
 
 #define MENU_LEFT_PADDING           ((TEXT_SCREEN_X - MENU_WIDTH) >> 1)
@@ -90,11 +95,11 @@
 #define MENU_SETTINGS_ROW_IND       2
 
 // COLOR CODES
-#define PADDING_COLOR               3  // cyan
-#define FONT_COLOR                  6  // brown
+#define PADDING_COLOR               6  // cyan
+#define FONT_COLOR                  3  // brown
 #define HIGH_LIGHT_PADDING_COLOR    1  // blue
 #define HIGH_LIGHT_FONT_COLOR       15 // white
-#define WIN_COLOR                   4 // red
+#define WIN_COLOR                   4  // red
 
 // STATUS BARS
 #define STATUS_BAR_LEN              10
@@ -122,6 +127,14 @@
 
 static int cursor_pos = MENU_START_ROW_IND; // cursor position, 0 for start, 1 for map, 2 for settings
 
+// check if two rectangles (32 * 32) intersect
+static int _check_overlap(int x1, int y1, int x2, int y2) {
+    if (x1 > x2 + COMMON_UNIT || x2 > x1 + COMMON_UNIT || y1 > y2 + COMMON_UNIT || y2 > y1 + COMMON_UNIT) 
+        return 0;
+    else
+        return 1;
+}
+
 
 void game_init(void) {
     int i;
@@ -138,15 +151,6 @@ void game_init(void) {
     for(i = 0; i < WALL_NUM; i++) vga_ctrl->wall_pos[i] = 0;
     vga_ctrl->gear_attr[0] = GET_POS_GEAR(HEALTH_GEAR_DEAFULT_X, HEALTH_GEAR_DEAFULT_Y);
     vga_ctrl->gear_attr[1] = GET_POS_GEAR(SPEED_GEAR_DEAFULT_X, SPEED_GEAR_DEAFULT_Y);
-    printf("health gear pos (x,y) = (%lu, %lu)\n", GET_GEAR_X(vga_ctrl->gear_attr[0]), GET_GEAR_Y(vga_ctrl->gear_attr[0]));
-    printf("speed gear pos (x,y) = (%lu, %lu)\n", GET_GEAR_X(vga_ctrl->gear_attr[1]), GET_GEAR_Y(vga_ctrl->gear_attr[1]));
-    if(vga_ctrl->gear_attr[0] & 1) {
-        printf("health gear exist!\n");
-    }
-    if(vga_ctrl->gear_attr[1] & 1) {
-        printf("speed gear exist!\n");
-    }
-    usleep(1000000);
 }
 
 /**
@@ -250,10 +254,70 @@ void draw_status_bars(void) {
     textVGADrawColorText(color_string, TANK_2_STATUS_BAR_X, y++, PADDING_COLOR, FONT_COLOR);
 }
 
+/**
+ * @brief given a wall with ( @param x , @param y ) as its top left corner, check if the wall occupy the same space as the tank, coin, and othe props
+ */
+#define NUM_BACK_UP_POS                 4
+#define BACK_UP_POS_X_1                 100
+#define BACK_UP_POS_Y_1                 150
+#define BACK_UP_POS_X_2                 BACK_UP_POS_X_1
+#define BACK_UP_POS_Y_2                 (BACK_UP_POS_Y_1 + WALL_LEN)
+#define BACK_UP_POS_X_3                 (SCREEN_WIDTH_PIXEL - BACK_UP_POS_X_1 - WALL_LEN)
+#define BACK_UP_POS_Y_3                 BACK_UP_POS_Y_1
+#define BACK_UP_POS_X_4                 BACK_UP_POS_X_3
+#define BACK_UP_POS_Y_4                 BACK_UP_POS_Y_2
+static int __pull_back_up_walls() {
+    static int i = 0;
+    if(i == NUM_BACK_UP_POS) return -1;
+    return i++;
+}
+// @return new wall position
+// if wall is not legal, then we pull one legal position from back_up_positions
+static int _get_real_wall_pos(int x, int y) {
+    int coin_x[COIN_TYPES], coin_y[COIN_TYPES];
+    int gear_x[GEAR_TYPES], gear_y[GEAR_TYPES];
+    int back_up_ind;
+    int i;
+    // second dimenstion is (x,y)
+    static back_up_positions[NUM_BACK_UP_POS][2] = {{BACK_UP_POS_X_1, BACK_UP_POS_Y_1}, {BACK_UP_POS_X_2, BACK_UP_POS_Y_2}, {BACK_UP_POS_X_3, BACK_UP_POS_Y_3}, {BACK_UP_POS_X_4, BACK_UP_POS_Y_4}};
+    // check if wall and coin overlaps
+     for(i = 0; i < COIN_TYPES; i++) { // very special, coin's coordinate is the center, we need to convert them to upper left
+        coin_x[i] = GET_COIN_X(vga_ctrl->coin_attr[i]) - 16;
+        coin_y[i] = GET_COIN_Y(vga_ctrl->coin_attr[i]) - 16;
+    }
+    for(i = 0; i < GEAR_TYPES; i++) {
+        gear_x[i] = GET_GEAR_X(vga_ctrl->gear_attr[i]);
+        gear_y[i] = GET_GEAR_Y(vga_ctrl->gear_attr[i]);
+    }
+
+    // check if wall and coin overlaps
+    for(i = 0; i < COIN_TYPES; i++) {
+        if(COIN_EXIST(vga_ctrl->coin_attr[i]) && _check_overlap(x, y, coin_x[i], coin_y[i])) {
+            back_up_ind = __pull_back_up_walls();
+            return GET_WALL_POS(back_up_positions[back_up_ind][0], back_up_positions[back_up_ind][1]);
+        }
+    }
+
+    // check if wall and gear overlaps
+    for(i = 0; i < GEAR_TYPES; i++) {
+        if(GEAR_EXIST(vga_ctrl->gear_attr[i]) && _check_overlap(x, y, gear_x[i], gear_y[i])) {
+            back_up_ind = __pull_back_up_walls();
+            return GET_WALL_POS(back_up_positions[back_up_ind][0], back_up_positions[back_up_ind][1]);
+        }
+    }
+
+    // if original wall position is legal, then return it, three return result are 
+    // in form of (1 | (x << 1) | (y << 11)) with first bit valid bit set to 1
+    return GET_WALL_POS(x, y);
+}
+
 void draw_wall(void) {
+    static wall_drawn = 0;
     int map_type = (vga_ctrl->game_attr >> 1) & 0xF;
     int x_leftinitial, y_initial, x_rightinitial, y_bottom, x_bottomleft;
     int x_middle, y_up;
+    if(wall_drawn) return;
+    wall_drawn = 1;
     printf("map type: %d\n", map_type);
     switch (map_type){
     case 1:
@@ -264,15 +328,15 @@ void draw_wall(void) {
         x_bottomleft = 272;
         // draw left vertical line of 'U'
         for (int i = 0; i < 6; i++){
-            vga_ctrl->wall_pos[i] = GET_WALL_POS(x_leftinitial, y_initial + i * 32);
+            vga_ctrl->wall_pos[i] = _get_real_wall_pos(x_leftinitial, y_initial + i * 32);
         }
         // draw right vertical line of 'U'
         for (int i = 0; i < 6; i++){
-            vga_ctrl->wall_pos[i + 6] = GET_WALL_POS(x_rightinitial, y_initial + i * 32);
+            vga_ctrl->wall_pos[i + 6] = _get_real_wall_pos(x_rightinitial, y_initial + i * 32);
         }
         // draw bottom horizontal line of 'U'
         for (int i = 0; i < 3; i++){
-            vga_ctrl->wall_pos[i + 12] = GET_WALL_POS(x_bottomleft + i * 32, y_bottom);
+            vga_ctrl->wall_pos[i + 12] = _get_real_wall_pos(x_bottomleft + i * 32, y_bottom);
         }
         break;
     case 2:
@@ -283,15 +347,15 @@ void draw_wall(void) {
         y_up = 144;
         // draw the upper horizontal line
         for (int i = 0; i < 3; i++){
-            vga_ctrl->wall_pos[i] = GET_WALL_POS(x_leftinitial + i * 32, y_initial);
+            vga_ctrl->wall_pos[i] = _get_real_wall_pos(x_leftinitial + i * 32, y_initial);
         }
         // draw the lower horizontal line
         for (int i = 0; i < 3; i++){
-            vga_ctrl->wall_pos[i+3] = GET_WALL_POS(x_leftinitial + i * 32, y_bottom);
+            vga_ctrl->wall_pos[i+3] = _get_real_wall_pos(x_leftinitial + i * 32, y_bottom);
         }
         // draw the middel vertical line
         for (int i = 0; i < 6; i++){
-            vga_ctrl->wall_pos[i+6] = GET_WALL_POS(x_middle + i * 32, y_up);
+            vga_ctrl->wall_pos[i+6] = _get_real_wall_pos(x_middle + i * 32, y_up);
         }
         break;
     case 4:
@@ -301,15 +365,15 @@ void draw_wall(void) {
         x_leftinitial = 240;
         // draw the upper horizontal line
         for (int i = 0; i < 4; i++){
-            vga_ctrl->wall_pos[i] = GET_WALL_POS(x_middle + i * 32, y_up);
+            vga_ctrl->wall_pos[i] = _get_real_wall_pos(x_middle + i * 32, y_up);
         }
         // draw the lower horizontal line
         for (int i = 0; i < 4; i++){
-            vga_ctrl->wall_pos[i+4] = GET_WALL_POS(x_middle + i * 32, y_bottom);
+            vga_ctrl->wall_pos[i+4] = _get_real_wall_pos(x_middle + i * 32, y_bottom);
         }
         // draw the left vertical line
         for (int i = 0; i < 5; i++){
-            vga_ctrl->wall_pos[i+8] = GET_WALL_POS(x_leftinitial, y_up + i * 32);
+            vga_ctrl->wall_pos[i+8] = _get_real_wall_pos(x_leftinitial, y_up + i * 32);
         }
         break;
     default:
@@ -320,23 +384,37 @@ void draw_wall(void) {
         y_up = 144;
         // draw the upper horizontal line
         for (int i = 0; i < 3; i++){
-            vga_ctrl->wall_pos[i] = GET_WALL_POS(x_leftinitial + i * 32, y_initial);
+            vga_ctrl->wall_pos[i] = _get_real_wall_pos(x_leftinitial + i * 32, y_initial);
         }
         // draw the lower horizontal line
         for (int i = 0; i < 3; i++){
-            vga_ctrl->wall_pos[i+3] = GET_WALL_POS(x_leftinitial + i * 32, y_bottom);
+            vga_ctrl->wall_pos[i+3] = _get_real_wall_pos(x_leftinitial + i * 32, y_bottom);
         }
         // draw the middel vertical line
         for (int i = 0; i < 6; i++){
-            vga_ctrl->wall_pos[i+6] = GET_WALL_POS(x_middle, y_up + i * 32);
+            vga_ctrl->wall_pos[i+6] = _get_real_wall_pos(x_middle, y_up + i * 32);
         }
         break;
+    }
+}
+
+static void clear_except_score_panel(void) {
+    int i, j;
+    for(i = 0; i < TEXT_SCREEN_Y; i++) {
+        for(j = 0; j < TEXT_SCREEN_X; j++) {
+            if(j < SCORE_PANEL_X || j > SCORE_PANEL_X + SCORE_PANEL_WIDTH 
+            || i < SCORE_PANEL_Y || i > SCORE_PANEL_Y + SCORE_PANEL_HEIGHT) {
+                vga_ctrl->VRAM[(i * TEXT_SCREEN_X + j) * 2] = 
+                vga_ctrl->VRAM[(i * TEXT_SCREEN_X + j) * 2 + 1] = 0;
+            }
+        }
     }
 }
 
 void draw_score_panel(void) {
     char color_string[80];
     int y;
+    clear_except_score_panel();
     y = SCORE_PANEL_Y;
     if(vga_ctrl->health[0]) {// player left wins,  display "WIN  LOSE" split string into 2 length 20 string, center WIN, LOSE respectively
         sprintf(color_string, "        WIN         ");
@@ -553,13 +631,7 @@ void menu_control(char* key) {
     }
 }
 
-// check if two rectangles intersect
-static int _check_overlap(int x1, int y1, int x2, int y2) {
-    if (x1 > x2 + 32 || x2 > x1 + 32 || y1 > y2 + 32 || y2 > y1 + 32)
-        return 0;
-    else
-        return 1;
-}
+
 
 
 // check if current drawing gear with has upper left point(x,y) does not overlap with coins, walls
@@ -613,7 +685,10 @@ void check_gears(void) {
     int new_x, new_y;
     int i;
     for(i = 0; i < COIN_TYPES; i++) {
-        new_x = rand() % SCREEN_WIDTH_PIXEL + 16, new_y = rand() % SCREEN_HEIGHT_PIXEL + 16;
+        new_x = rand() % SCREEN_WIDTH_PIXEL, new_y = rand() % SCREEN_HEIGHT_PIXEL;
+        // align to 32 
+        new_x = new_x - new_x % 32 + 16;
+        new_y = new_y - new_y % 32 + 16;
         if(!COIN_EXIST(vga_ctrl->coin_attr[i])) {
             if(check_gear_legal_pos(new_x, new_y)) { // check if new position has overlap with other gears and if new position is on screen
                 if(calc_dis(new_x, new_y, last_coin_pos[i][0], last_coin_pos[i][1]) < REGENERATE_RADIUS * REGENERATE_RADIUS) { // too close to last gear, not fair
@@ -629,6 +704,9 @@ void check_gears(void) {
 
     for(i = 0; i < GEAR_TYPES; i++) {
         new_x = rand() % SCREEN_WIDTH_PIXEL, new_y = rand() % SCREEN_HEIGHT_PIXEL;
+        // align to 32
+        new_x = new_x - new_x % 32;
+        new_y = new_y - new_y % 32;
         if(!GEAR_EXIST(vga_ctrl->gear_attr[i])) {
             if(check_gear_legal_pos(new_x, new_y)) {
                 if(calc_dis(new_x, new_y, last_gear_pos[i][0], last_gear_pos[i][1]) < REGENERATE_RADIUS * REGENERATE_RADIUS) { // too close to last gear, not fair

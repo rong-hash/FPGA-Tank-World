@@ -9,7 +9,7 @@ obj/default/main.o: main.c ../tankworld_bsp/system.h \
  ../tankworld_bsp//HAL/inc/nios2.h usb_kb/GenericMacros.h \
  usb_kb/GenericTypeDefs.h usb_kb/HID.h usb_kb/MAX3421E.h \
  usb_kb/transfer.h usb_kb/usb_ch9.h usb_kb/USB.h text_mode_vga.h test.h \
- game.h
+ game.h pio.h
 
 ../tankworld_bsp/system.h:
 
@@ -50,3 +50,5 @@ text_mode_vga.h:
 test.h:
 
 game.h:
+
+pio.h:

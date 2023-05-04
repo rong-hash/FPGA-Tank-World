@@ -17,6 +17,7 @@
 `define POS_MASK        ((1<<10) - 1)
 
 module color_mapper(
+    input logic game_start,
     input logic CLK, pixel_clk,
     input logic [9:0] tank1_x, tank1_y, tank2_x, tank2_y, DrawX, DrawY,
     input logic [2:0] base1_direction, turret1_direction, base2_direction, turret2_direction,
@@ -46,6 +47,7 @@ module color_mapper(
     logic [7:0] Rt[8];
     logic [7:0] Gt[8];
     logic [7:0] Bt[8];
+    logic [7:0] menuR, menuG, menuB;
     logic [7:0] Rba, Gba, Bba; // background R G B
     logic [7:0] Rcg, Gcg, Bcg; // gold coin R G B
     logic [7:0] Rcs, Gcs, Bcs; // silver coin R G B
@@ -78,6 +80,12 @@ module color_mapper(
             end
         end
     end
+
+
+    // menu rom
+    // menu is a 128 pixel width and 96 pixel height image
+    // drawX from 0 to 639, drawY from 0 to 479
+    menu_example menu(.DrawX(DrawX), .DrawY(DrawY), .vga_clk(CLK), .blank(1'b1), .red(menuR), .green(menuG), .blue(menuB));
 
 
     // tank's base rom
@@ -176,14 +184,14 @@ module color_mapper(
                 if (font_data[7 - DrawX[2:0]] ^ char[15]) begin // if, after exerting inverse logic, it's foreground.
                     case (char[4])
                         0 : begin  
-                            redout <= palette[char[7:5]][11:8];
-                            greenout <= palette[char[7:5]][7:4];
-                            blueout <= palette[char[7:5]][3:0];
+                            redout = palette[char[7:5]][11:8];
+                            greenout = palette[char[7:5]][7:4];
+                            blueout = palette[char[7:5]][3:0];
                         end 
                         1 : begin 
-                            redout <= palette[char[7:5]][27:24];
-                            greenout <= palette[char[7:5]][23:20];
-                            blueout <= palette[char[7:5]][19:16];
+                            redout = palette[char[7:5]][27:24];
+                            greenout = palette[char[7:5]][23:20];
+                            blueout = palette[char[7:5]][19:16];
                         end
                         default : ;
                     endcase
@@ -191,20 +199,26 @@ module color_mapper(
                 else begin // if, after exerting inverse logic, it's background
                     case (char[0])
                         0 : begin  
-                            redout <= palette[char[3:1]][11:8];
-                            greenout <= palette[char[3:1]][7:4];
-                            blueout <= palette[char[3:1]][3:0];
+                            redout = palette[char[3:1]][11:8];
+                            greenout = palette[char[3:1]][7:4];
+                            blueout = palette[char[3:1]][3:0];
                         end 
                         1 : begin 
-                            redout <= palette[char[3:1]][27:24];
-                            greenout <= palette[char[3:1]][23:20];
-                            blueout <= palette[char[3:1]][19:16];
+                            redout = palette[char[3:1]][27:24];
+                            greenout = palette[char[3:1]][23:20];
+                            blueout = palette[char[3:1]][19:16];
                         end
                         default : ;
                     endcase
                 end
 
-            end else if (DrawX >= tank1_x && DrawX < tank1_x + img_width &&
+            end 
+            else if (game_start == 1'b0) begin
+                redout = menuR;
+                greenout = menuG;
+                blueout = menuB;
+            end
+            else if (DrawX >= tank1_x && DrawX < tank1_x + img_width &&
                 DrawY >= tank1_y && DrawY < tank1_y + img_height) begin
                     base_x = (DrawX - tank1_x) * 20;
                     base_y = (DrawY - tank1_y) * 15;

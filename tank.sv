@@ -36,6 +36,7 @@ module update_base(
 	logic upstop;
 	logic downstop;
 	logic overlap[16];
+	logic outofbound;
 	logic [9:0] next_tank_x, next_tank_y;
 	always_comb begin
 		next_tank_x = tank_x;
@@ -44,43 +45,22 @@ module update_base(
 		case (keycode)
 			// A
 			8'h1: begin
-				if (tank_x <= tank_X_Min) begin
-					next_tank_x = tank_X_Min;
-				end
-
-				else begin
-					next_tank_x = tank_x - speed;
-				end
+				next_tank_x = tank_x - speed;
 				next_base_direction = 3'h2;
 			end
 			// S
 			8'h2: begin
-				if (tank_y + 32 >= tank_Y_Max) begin
-					next_tank_y = tank_Y_Max - 32;
-				end
-				else begin
-					next_tank_y = tank_y + speed;
-				end
+				next_tank_y = tank_y + speed;
 				next_base_direction = 3'h4;
 			end
 			// W
 			8'h3: begin
-				if (tank_y <= tank_Y_Min) begin
-					next_tank_y = tank_Y_Min;
-				end
-				else begin
-					next_tank_y = tank_y - speed;
-				end
+				next_tank_y = tank_y - speed;
 				next_base_direction = 3'h0;
 			end
 			// D
 			8'h4: begin
-				if (tank_x + 32 >= tank_X_Max) begin
-					next_tank_x = tank_X_Max - 32;
-				end
-				else begin
-					next_tank_x = tank_x + speed;
-				end
+				next_tank_x = tank_x + speed;
 				next_base_direction = 3'h6;
 			end
 			default: ;
@@ -102,8 +82,11 @@ module update_base(
 	check_wall cw13(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[13]), .overlap(overlap[13]));
 	check_wall cw14(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[14]), .overlap(overlap[14]));
 	check_wall cw15(.x(next_tank_x), .y(next_tank_y), .wall_pos_reg(wall_pos_reg[15]), .overlap(overlap[15]));
+	check_border cb(.x(next_tank_x), .y(next_tank_y), .out(outofbound));
 	always_comb begin
-		if (overlap[0] || overlap[1] || overlap[2] || overlap[3] || overlap[4] || overlap[5] || overlap[6] || overlap[7] || overlap[8] || overlap[9] || overlap[10] || overlap[11] || overlap[12] || overlap[13] || overlap[14] || overlap[15]) begin
+		if (overlap[0] || overlap[1] || overlap[2] || overlap[3] || overlap[4] || 
+		overlap[5] || overlap[6] || overlap[7] || overlap[8] || overlap[9] || overlap[10] 
+		|| overlap[11] || overlap[12] || overlap[13] || overlap[14] || overlap[15] || outofbound) begin
 			next_tank_x_out = tank_x;
 			next_tank_y_out = tank_y;
 		end
@@ -301,6 +284,25 @@ module  ball (input logic [31:0] bullet,
 	assign next_bullet = (((bullet & 1) && !hit[0] && !hit[1]) && (is_overlap == 1'b0)) ? ((bullet & 1) | (next_dir << 1) | (next_Ball_X_Pos << 9) | (next_Ball_Y_Pos << 19)) : 0;
 
 endmodule
+
+module check_border(
+	input logic [9:0] x, // tank_x
+	input logic [9:0] y, // tank_y
+	output logic out
+);
+	// height from 0 to 479, width from 0 to 639
+	// (x, y) is the upper left corner of the tank
+	// tank size is 32 * 32
+	always_comb begin
+		if (x < 0 || x > (639 - 32) || y < 0 || y > (479 - 32)) begin
+			out = 1'b1;
+		end
+		else begin
+			out = 1'b0;
+		end
+	end
+endmodule
+
 
 module check_wall(
 	input logic [9:0] x, // tank_x or ball_x

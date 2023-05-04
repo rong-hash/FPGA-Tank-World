@@ -138,7 +138,7 @@ ram my_vram(.address_a(AVL_ADDR[10:0]), .address_b(index), .byteena_a(AVL_BYTE_E
 // RD_DATA2 is to avoid multi-driver, so AVL_WRITE data doesn't have this problem
 // see a series of defines to see the address range of each register
 always_ff @(posedge CLK ) begin
-	if(AVL_WRITE && AVL_ADDR[11]) begin
+	if(AVL_WRITE && AVL_ADDR[11] && AVL_CS) begin
 		if(AVL_ADDR <= `PALETTE_END)
 			palette[AVL_ADDR[2:0]] <= AVL_WRITEDATA;
 		else if(AVL_ADDR <= `CTRL_REG_END)
@@ -153,7 +153,7 @@ always_ff @(posedge CLK ) begin
 					wall_pos_reg[AVL_ADDR - `INIT_POS_REG_END - 1] <= AVL_WRITEDATA;
 			end
 		end
-	end else if(AVL_READ && AVL_ADDR[11]) begin
+	end else if(AVL_READ && AVL_ADDR[11] && AVL_CS) begin
 		if(AVL_ADDR <= `PALETTE_END)
 			RD_DATA2 <= palette[AVL_ADDR[2:0]];
 		else if(AVL_ADDR <= `CTRL_REG_END)
@@ -205,7 +205,7 @@ tank_position_direction my_tank(.keycode(control_reg), .Reset(RESET), .frame_clk
 			.speed_up(speed_up), .to_speed(to_speed),
 			.bullet_array(bullet_array), .hole_ind(hole_ind), .hit(hit));
 
-color_mapper mapper(.CLK(CLK), .pixel_clk(pixel_clk), .DrawX(DrawX), .DrawY(DrawY), 
+color_mapper mapper(.game_start(game_attr_reg[0]), .CLK(CLK), .pixel_clk(pixel_clk), .DrawX(DrawX), .DrawY(DrawY), 
 					.tank1_x(tank_x[0]), .tank2_x(tank_x[1]), .tank1_y(tank_y[0]), .tank2_y(tank_y[1]),
 					.base1_direction(base1_direction), .turret1_direction(turret1_direction), 
 					.base2_direction(base2_direction), .turret2_direction(turret2_direction),

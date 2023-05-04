@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'lab7soc'
  * SOPC Builder design path: ../../lab7soc.sopcinfo
  *
- * Generated: Wed May 03 16:43:26 CDT 2023
+ * Generated: Wed May 03 22:33:58 CDT 2023
  */
 
 /*
@@ -143,6 +143,7 @@
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
 #define __ALTPLL
+#define __SOUND
 #define __VGA_TEXT_MODE_CONTROLLER
 
 
@@ -433,6 +434,20 @@
 
 
 /*
+ * sound_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_sound_0 sound
+#define SOUND_0_BASE 0x20000
+#define SOUND_0_IRQ -1
+#define SOUND_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define SOUND_0_NAME "/dev/sound_0"
+#define SOUND_0_SPAN 16384
+#define SOUND_0_TYPE "sound"
+
+
+/*
  * spi_0 configuration
  *
  */
@@ -502,7 +517,7 @@
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1683148591
+#define SYSID_QSYS_0_TIMESTAMP 1683170703
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 

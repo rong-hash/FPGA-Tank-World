@@ -8,6 +8,6 @@
    <name preferredWidth="490" />
   </columns>
  </systemtable>
- <library expandedCategories="Project,Project/ECE 385 Custom IPs,Library" />
- <window width="2560" height="1528" x="76" y="5" />
+ <library expandedCategories="Project,Library,Project/ECE 385 Custom IPs" />
+ <window width="2560" height="1528" x="272" y="75" />
 </preferences>
