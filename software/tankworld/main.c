@@ -214,7 +214,7 @@ int main() {
 				// write the key code to the ram
 				if((vga_ctrl->game_attr & 1)) {
 					if(vga_ctrl->health[0] == 0 || vga_ctrl->health[1] == 0 || 
-					vga_ctrl->health[0] > 5 || vga_ctrl->health[1] > 5) {
+					vga_ctrl->health[0] > 25 || vga_ctrl->health[1] > 25) {
 						draw_score_panel();
 					} else {
 						check_gears();

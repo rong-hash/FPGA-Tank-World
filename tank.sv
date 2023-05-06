@@ -448,8 +448,13 @@ module tank_position_direction(
 
 				fire_scc[i] <= next_fire_scc[i];
 				
-				if(to_speed[i]) speed[i] <= speed[i] << 1;
-
+				if(to_speed[i]) begin
+					if(speed[i] < 4) begin
+						speed[i] <= speed[i] << 1;
+					end else if(speed[i] < 10) begin
+						speed[i] <= speed[i] + 1;
+					end
+				end
 				if(fire[i] && !(fire_scc[i] & (fire_scc_num - 1)) ) begin
 					// check for hole in bullet array, at ARRAY_SIZE, it's a dummy node meaning it must be a hole
 					// for(idx[i] = ARRAY_SIZE + 1; idx[i] > 0; idx[i] = idx[i] - 1)

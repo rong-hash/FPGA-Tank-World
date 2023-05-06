@@ -416,7 +416,7 @@ void draw_score_panel(void) {
     int y;
     clear_except_score_panel();
     y = SCORE_PANEL_Y;
-    if(vga_ctrl->health[0]) {// player left wins,  display "WIN  LOSE" split string into 2 length 20 string, center WIN, LOSE respectively
+    if(vga_ctrl->health[0] < 50 && vga_ctrl->health[0] > 0) {// player left wins,  display "WIN  LOSE" split string into 2 length 20 string, center WIN, LOSE respectively
         sprintf(color_string, "        WIN         ");
         textVGADrawColorText(color_string, SCORE_PANEL_X, y, PADDING_COLOR, WIN_COLOR);
         sprintf(color_string, "        LOSE        ");
@@ -447,9 +447,9 @@ void draw_score_panel(void) {
     }
 
     // draw the health
-    sprintf(color_string, "     HEALTH:  %01lu     ", vga_ctrl->health[0]);
+    sprintf(color_string, "     HEALTH:  %01lu     ", vga_ctrl->health[0] > 50 ? 0 : vga_ctrl->health[0]);
     textVGADrawColorText(color_string, SCORE_PANEL_X, y, PADDING_COLOR, FONT_COLOR);
-    sprintf(color_string, "     HEALTH:  %01lu     ", vga_ctrl->health[1]);
+    sprintf(color_string, "     HEALTH:  %01lu     ", vga_ctrl->health[1] > 50 ? 0 : vga_ctrl->health[1]);
     textVGADrawColorText(color_string, SCORE_PANEL_X + 20, y++, PADDING_COLOR, FONT_COLOR);
     
     // draw padding 3

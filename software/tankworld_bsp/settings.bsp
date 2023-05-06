@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>May 3, 2023 10:33:58 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1683171238051</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>May 4, 2023 11:02:55 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1683259375678</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>D:\_NewTerm\ECE385\FPGA-Tank-World\software\tankworld_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\lab7soc.sopcinfo</SopcDesignFile>

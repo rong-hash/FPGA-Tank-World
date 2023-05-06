@@ -4,21 +4,39 @@ theme : gaia
 class : invert
 ---
 # Final Project  
-<style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alice">
 
-p, ul,li {
-  font-family: 'Alice', serif;
-}
-
-</style>
-
-Slides
-
-https://www.icloud.com/keynote/035IBM-K2cGiC3KwusnviqjMg#Presentation
+Tank World : Video Game Completed on FPGA
 
 ---
-Thanks to 
+
+## Features
+* VGA support : Text mode and graphics with the help of layering.
+* Hardware acceleration : 95% of components / functionalities are in hardware which run in parallel for numerous logics.
+* Software hardware development : encapsulated modules in Platform Designer $\rightarrow$ Hardware interacting with software via mmap.
+* Keyboard, HEX, buttons etc. peripherals with NoisIIe Soc devleopment.
+* Props, coins, walls & interactive game elements realized in hardware.
+---
+
+## Intro
+
+This project is ECE 385 Final Project completed by Hao Ren and Zhirong Chen. 
+
+This is a game featuring two tanks playing against each other in several available custom 2D maps. The game involves several interactive elements such as tanks, bullets, walls, and numerous props with health and wealth as centural gaming statistics to provide user with a dynamic gaming experience on FPGA. 
+
+
+---
+
+## Intro (cont.)
+
+All props and other gaming elements have intrinsic characteristics that will be covered in detail in following slides. Some implementation techniques will also be mentioned in the following slides.
+
+We allow up to 16 walls and 16 bullets as well as re-generatable props in the game which significantly complicate the game. 
+
+The total SCL(Source Code Lines) are ~2500 for hardware and 1000 for software. (After using for loops for countless SV code)
+
+
+---
+## Thanks to 
 
 https://opengameart.org/content/tank-sprite
 
@@ -31,12 +49,15 @@ https://opengameart.org/content/32x32-stone-brick-sprite
 https://opengameart.org/content/stone-tiles-0
 
 ---
-## Stages
-Stages are in keynotes. 
 
-We wrote stages document to 
-* organize our thoughts 
-* core ideas of our design.
+# Written Description
+
+This section will contain detailed explanation on most of our important components to our design.
+* Bullets
+* Clocks and Counters
+* Walls and Tanks
+* Props
+* ...
 
 ---
 ## Bullet : holes and array
@@ -560,3 +581,10 @@ Note :
 * So we move I2S module to Platform designer.
 
 ![image-20230429175508113](waveform1.png)
+
+
+---
+
+# Sadly, we didn't make the sound work...
+
+Very very unfortunate...

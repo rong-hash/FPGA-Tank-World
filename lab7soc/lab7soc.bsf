@@ -353,7 +353,7 @@ refer to the applicable agreement for further details.
 		(text "red" (rect 213 987 444 1984)(font "Arial" (color 0 0 0)))
 		(text "hs" (rect 213 1003 438 2016)(font "Arial" (color 0 0 0)))
 		(text "vs" (rect 213 1019 438 2048)(font "Arial" (color 0 0 0)))
-		(text " system " (rect 445 1040 938 2090)(font "Arial" ))
+		(text " lab7soc " (rect 445 1040 944 2090)(font "Arial" ))
 		(line (pt 208 32)(pt 272 32)(line_width 1))
 		(line (pt 272 32)(pt 272 1040)(line_width 1))
 		(line (pt 208 1040)(pt 272 1040)(line_width 1))
